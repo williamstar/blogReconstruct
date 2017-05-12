@@ -2,14 +2,14 @@
   <div class='header-module'>
     <div class="content">
       <el-row type="flex">
-        <el-col :span="20">
+        <el-col :md="20" :sm="18" :xs="{span:24}">
           <div class="title">
             <h2 class="first-name">william personal</h2>
             <h2 class="last-name">blog</h2>
           </div>
         </el-col>
-        <el-col :span="4">
-          <img src="http://placehold.it/500x500" width="150" height="150" class="user-avatar" alt="用户头像">
+        <el-col :md="{span:4, pull: 1}" :sm="{span:4, offset:1}" :xs="{span:0}">
+          <img src=" http://placehold.it/500x500 " class="avatar " alt="用户头像 ">
         </el-col>
       </el-row>
     </div>
@@ -27,20 +27,39 @@ export default {
   width: 100%;
   background: #D8E2DD;
   .content {
-    width: 1000px;
+    width: 1020px;
     margin: 0 auto;
     padding: 10px;
     color: #12A2BC;
+    @media screen and (max-width: 1020px) {
+      width: auto;
+    }
     .el-row--flex {
       align-items: center;
     }
     .title {
+      margin: 0 auto;
       display: flex;
       font-family: 'Chelsea Market';
       text-transform: uppercase;
       font-size: 36px;
       flex-direction: column;
+      @media screen and (max-width: 768px) {
+        font-size: 42px;
+        .last-name {
+          padding-right: 20px;
+          text-align: right;
+        }
+      }
+      @media screen and (max-width: 700px) {
+        font-size: 36px;
+      }
+      @media screen and (max-width: 633px) {
+        font-size: 32px;
+      }
       .first-name {
+        padding-left: 20px;
+        white-space: nowrap;
         font-family: inherit;
       }
       .last-name {
@@ -49,6 +68,11 @@ export default {
       }
     }
     .avatar {
+      margin: 0 auto;
+      @media screen and (max-width: 768px) {
+        display: none;
+      }
+      max-height: 150px;
       object-fit: cover;
     }
   }
