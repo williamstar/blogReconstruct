@@ -103,7 +103,7 @@ export default {
     this.editor = editormd('my-editor', {
       width: '100%',
       height: 800,
-      value: document.querySelector('#text').value,
+      value: this.form.text,
       saveHTMLToTextarea: true,
       path: '/static/lib/',
       imageUpload: true,

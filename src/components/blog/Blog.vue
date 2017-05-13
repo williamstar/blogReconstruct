@@ -1,0 +1,80 @@
+<template>
+  <div class='blog-module'>
+    <h2 class="title">
+      {{blog.title}}
+    </h2>
+    <div class="detail">
+      <span class="category">{{blog.category}}</span>
+      <span class="tags-wrapper">
+        <el-tag v-for="(tag, index) in blog.tags" class="tag" :key="tag">{{tag}}</el-tag>
+      </span>
+      <span class="datetime">{{blog.datetime}}</span>
+    </div>
+    <div class="blog-wrapper">
+      <div id="blog-text"></div>
+    </div>
+  </div>
+</template>
+<script type='text/javascript'>
+/* eslint-disable */
+import $ from 'jquery';
+import editormd from 'editormd';
+import marked from 'marked';
+/* eslint-enable */
+
+const OK = 'success';
+export default{
+  data() {
+    return {
+      blog: {
+      },
+      editor: {},
+    };
+  },
+  activated() {
+    this
+      .$http
+      .get(`/api/blog/${this.$route.params.blogId}`)
+      .then((res) => {
+        res = res.body;
+        if (res.status === OK) {
+          this.blog = res.data;
+          this.editor = editormd.markdownToHTML('blog-text', {
+            markdown: this.blog.text,
+            htmlDecode: true,
+            markdownSourceCode: false,
+          });
+        }
+      });
+  },
+};
+</script>
+<style lang='scss' scoped>
+.blog-module {
+  width: 1200px;
+  margin: 0px auto;
+  padding: 20px 0;
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  .detail {
+    margin: 10px;
+    display: flex;
+    .tag {
+      margin-right: 5px;
+    }
+    .datetime {
+      margin-left: auto;
+      color: #fff;
+    }
+  }
+  .blog-wrapper {
+    padding: 20px;
+    #blog-text {
+      margin-left: -20px;
+    }
+  }
+}
+</style>

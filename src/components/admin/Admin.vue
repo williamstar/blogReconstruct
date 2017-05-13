@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="blog-body">
-      <div class="card-wrapper" v-for="(blog, index) in blogs" :key="">
+      <router-link :to="`/blog/${blog._id}`" class="card-wrapper" v-for="(blog, index) in blogs" :key="blog._id">
         <el-card :body-style="{padding: '0px'}">
           <img :src="'/api/image/' + blog.cover_id" class="cover" alt="封面图片">
           <div style="padding: 14px;">
@@ -18,11 +18,11 @@
             </div>
           </div>
           <div v-if="$route.fullPath.indexOf('admin') !== -1" class="btn-group" :data-id="blog._id">
-            <el-button type="success" icon="edit" @click="edit(blog._id)"></el-button>
-            <el-button type="danger" icon="delete" @click="del(blog._id, index)"></el-button>
+            <el-button type="success" icon="edit" @click.prevent.stop="edit(blog._id)"></el-button>
+            <el-button type="danger" icon="delete" @click.prevent.stop="del(blog._id, index)"></el-button>
           </div>
         </el-card>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
