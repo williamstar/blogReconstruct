@@ -2,10 +2,8 @@
   <div id="app">
     <my-header></my-header>
     <div class="main">
-      <div class="content-wrapper">
-        <div class="content">
-          <router-view></router-view>
-        </div>
+      <div class="content">
+        <router-view></router-view>
       </div>
       <div class="footer-wrapper">
         <my-footer></my-footer>
@@ -41,15 +39,17 @@ export default {
   height: 100%;
   .main {
     height: calc(100% - 174px);
-    background: #48D0D3;
-    .content-wrapper {
-      height: 100%;
-      .content {
-        padding-bottom: 84px;
+    .content {
+      min-height: 100%;
+      margin-bottom: -84px;
+      background: #48D0D3;
+      &:after {
+        content: "";
+        display: block;
       }
-    }
-    .footer-wrapper {
-      margin-top: -84px;
+      &:after, &+ footer-wrapper {
+        height: 100px;
+      }
     }
   }
 }
