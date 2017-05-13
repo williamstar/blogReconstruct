@@ -3,7 +3,9 @@
     <my-header></my-header>
     <div class="main">
       <div class="content">
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </div>
       <div class="footer-wrapper">
         <my-footer></my-footer>
@@ -47,7 +49,8 @@ export default {
         content: "";
         display: block;
       }
-      &:after, &+ footer-wrapper {
+      &:after,
+      &+footer-wrapper {
         height: 100px;
       }
     }

@@ -99,7 +99,7 @@ export default {
       editor: {},
     };
   },
-  mounted() {
+  activated() {
     this.editor = editormd('my-editor', {
       width: '100%',
       height: 800,
@@ -121,7 +121,7 @@ export default {
           res = res.body;
           if (res.status === OK) {
             this.form = res.data.blog;
-            this.options = res.data.categories;
+            this.categories = res.data.categories;
             // 设置编辑器的内容
             this.editor.settings.value = this.form.text;
           }

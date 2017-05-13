@@ -37,9 +37,7 @@ export default{
     };
   },
   methods: {
-    edit(e) {
-      debugger;
-      let id = e.currentTarget.parentNode.dataset.id;
+    edit(id) {
       this.$router.push(`/edit/${id}`);
     },
     del(id, index) {
