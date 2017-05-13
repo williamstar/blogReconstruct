@@ -48,7 +48,7 @@ compiler.plugin('compilation', function (compilation) {
 //   app.use(proxyMiddleware(options.filter || context, options))
 // })
 var proxyOptions = {
-  target: 'htpp://localhost:5000/',
+  target: 'htpp://localhost:6000/',
   pathRewrite: {
     "/api/*": "/"
   },

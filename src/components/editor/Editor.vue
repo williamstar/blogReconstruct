@@ -54,7 +54,7 @@
           </el-row>
           <!--博客框-->
           <div class="editor-wrapper">
-            <input type="hidden" id="text" value="demo">
+            <input type="hidden" id="text" value="">
             <div id="my-editor">
             </div>
           </div>

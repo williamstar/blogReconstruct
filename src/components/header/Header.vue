@@ -3,7 +3,7 @@
     <div class="content">
       <el-row type="flex">
         <el-col :md="20" :sm="18" :xs="{span:24}">
-          <div class="title">
+          <div class="title" @click="toIndex">
             <h2 class="first-name">william personal</h2>
             <h2 class="last-name">blog</h2>
           </div>
@@ -17,8 +17,14 @@
 </template>
 <script type='text/javascript'>
 export default {
-  components: {
-
+  methods: {
+    toIndex() {
+      if (this.$route.fullPath.indexOf('editor') !== -1) {
+        this.$router.push('/admin');
+      } else {
+        this.$router.push('/');
+      }
+    },
   },
 };
 </script>
