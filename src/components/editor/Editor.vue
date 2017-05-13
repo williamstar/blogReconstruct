@@ -6,7 +6,6 @@
         <el-form ref="form" label-width="40px">
           <el-row>
             <el-col :span="20">
-
               <!--标题和时间-->
               <el-row type="flex" justify="space-between">
                 <el-col :span="12">
@@ -16,7 +15,7 @@
                 </el-col>
                 <el-col :span="9" :offset="3">
                   <el-form-item label="分类">
-                    <el-select v-model="form.category">
+                    <el-select v-model="form.category" clearable >
                       <el-option v-for="option in options" :value="option" :key="option" :label="option"> </el-option>
                     </el-select>
                   </el-form-item>
@@ -42,13 +41,15 @@
               </el-row>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="4" class="clearfix">
               <!--封面-->
-              <el-button v-if="!haveCover" class="btn-cover" @click="selectCover">
-                <i class="el-icon-plus icon-plus"></i>
-              </el-button>
-              <img v-else class="upload-cover" alt="封面" @click="selectCover">
-              <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
+              <div class="cover-wrapper">
+                <el-button v-if="!haveCover" class="btn-cover" @click="selectCover">
+                  <i class="el-icon-plus icon-plus"></i>
+                </el-button>
+                <img v-else class="upload-cover" alt="封面" @click="selectCover">
+                <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
+              </div>
             </el-col>
           </el-row>
           <!--博客框-->
@@ -56,6 +57,11 @@
             <input type="hidden" id="text" value="demo">
             <div id="my-editor">
             </div>
+          </div>
+          <div class="submit-button-wrapper">
+            <el-button type="primary" size="large">
+              提交
+            </el-button>
           </div>
         </el-form>
       </el-col>
@@ -152,32 +158,46 @@ export default {
 <style lang='scss' scoped>
 .editor-module {
   padding-top: 30px;
-  label {
-    color: #fff;
-  }
-  tag {
-    margin-right: 5px;
-  }
-  .btn-cover {
-    width: 125px;
-    height: 125px;
-    .avatar-upload {
-      font-size: 26px;
-      color: #48d0d3;
+  .el-form {
+    padding-bottom: 60px;
+    label {
+      color: #fff;
     }
-  }
-  .upload-cover {
-    width: 125px;
-    height: 125px;
-    object-fit: cover;
-    cursor: pointer;
-  }
-  .input-new-tag {
-    width: 77.67px;
-  }
-  .editor-wrapper {
-    margin-top: 10px;
-    height: 800px;
+    .tag {
+      margin-right: 5px;
+    }
+    .cover-wrapper {
+      float: right;
+      .btn-cover {
+        width: 125px;
+        height: 125px;
+        border-radius: 5px;
+        .avatar-upload {
+          font-size: 26px;
+          color: #48d0d3;
+        }
+      }
+      .upload-cover {
+        width: 125px;
+        height: 125px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+    .input-new-tag {
+      width: 77.67px;
+    }
+    .editor-wrapper {
+      margin-top: 10px;
+      height: 800px;
+    }
+    .submit-button-wrapper {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 </style>
