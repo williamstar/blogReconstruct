@@ -15,17 +15,17 @@
                 </el-col>
                 <el-col :span="9" :offset="3">
                   <el-form-item label="分类">
-                    <el-select v-model="form.category" clearable >
-                      <el-option v-for="option in options" :value="option" :key="option" :label="option"> </el-option>
+                    <el-select v-model="form.category_id" clearable>
+                      <el-option v-for="category in categories" :value="category._id" :key="category._id" :label="category.category"> </el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
               </el-row>
-              <!--分类和标签和自动保存-->
+              <!--标签和自动保存-->
               <el-row>
                 <el-col :span="9">
                   <el-form-item label="标签">
-                    <el-tag v-for="tag in tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
+                    <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
                       {{tag}}
                     </el-tag>
                     <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
@@ -40,26 +40,25 @@
                 </el-col>
               </el-row>
             </el-col>
-
+            <!--封面-->
             <el-col :span="4" class="clearfix">
-              <!--封面-->
               <div class="cover-wrapper">
-                <el-button v-if="!haveCover" class="btn-cover" @click="selectCover">
+                <el-button v-if="!haveCover && !form.cover_id" class="btn-cover" @click="selectCover">
                   <i class="el-icon-plus icon-plus"></i>
                 </el-button>
-                <img v-else class="upload-cover" alt="封面" @click="selectCover">
+                <img v-else :src="`/api/image/${form.cover_id}`" class="upload-cover" alt="封面" @click="selectCover">
                 <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
               </div>
             </el-col>
           </el-row>
           <!--博客框-->
           <div class="editor-wrapper">
-            <input type="hidden" id="text" value="">
+            <input type="hidden" id="text" :value="form.text">
             <div id="my-editor">
             </div>
           </div>
           <div class="submit-button-wrapper">
-            <el-button type="primary" size="large">
+            <el-button type="primary" size="large" @click="submit">
               提交
             </el-button>
           </div>
@@ -70,44 +69,73 @@
   </div>
 </template>
 <script type='text/javascript'>
+import { currentTime } from '@/common/js/time';
 /* eslint-disable */
 import $ from 'jquery';
 import editormd from 'editormd';
 /* eslint-enable */
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
 
+const OK = 'success';
+
 export default {
   data() {
     return {
-      options: ['python开发', 'web前端', '科技趣事'],
-      tags: [],
+      categories: '',
       inputVisible: false,
       inputValue: '',
       autoSave: true,
       haveCover: false,
+      loading: false,
+      cbMessage: '',
+      cbType: '',
       form: {
         title: '',
-        category: '',
+        category_id: '',
+        tags: [],
+        cover_id: '', // 蛇纹命令兼容mongodb早期设置
+        text: 'learn well, finish your dream',
       },
+      editor: {},
     };
   },
   mounted() {
-    try {
-      this.editor = editormd('my-editor', {
-        width: '100%',
-        height: 800,
-        value: document.querySelector('#text').value,
-        saveHTMLToTextarea: true,
-        path: '/static/lib/',
-        imageUpload: true,
-        imageUploadURL: '/upload',
-        imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
-        // theme: 'dark',
-        // previewTheme: 'dark',
-        // editorTheme: 'pastel-on-dark',
-      });
-    } catch (e) {
-      console.log(e);
+    this.editor = editormd('my-editor', {
+      width: '100%',
+      height: 800,
+      value: document.querySelector('#text').value,
+      saveHTMLToTextarea: true,
+      path: '/static/lib/',
+      imageUpload: true,
+      imageUploadURL: '/api/upload',
+      imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
+      // theme: 'dark',
+      // previewTheme: 'dark',
+      // editorTheme: 'pastel-on-dark',
+    });
+    if (this.$route.params.blogId) {
+      this
+        .$http
+        .get(`/api/blog/${this.$route.params.blogId}/edit`)
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.form = res.data.blog;
+            this.options = res.data.categories;
+            // 设置编辑器的内容
+            this.editor.settings.value = this.form.text;
+          }
+        });
+    } else {
+      this
+        .$http
+        .get('/api/blog/new')
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.categories = res.data;
+          }
+        });
     }
 
     document.addEventListener('resize', () => {
@@ -115,6 +143,64 @@ export default {
     });
   },
   methods: {
+    submit() {
+      this.$set(this.form, 'text', this.editor.getMarkdown());
+      let imageList = this.extract_images_guid(this.form.text);
+      let time = currentTime();
+      let data = Object.assign(this.form);
+      data.time = time;
+      data.images = imageList;
+      if (this.form._id) {
+        // 存在id则是修改
+        this
+          .$http
+          .put(`/api/blog/${this.form._id}/edit`, data)
+          .then((res) => {
+            res = res.body;
+            if (res.status === OK) {
+              this.cbHandler('修改博客成功', 'success');
+            } else {
+              this.cbHandler('修改博客失败', 'danger');
+            }
+          });
+      } else {
+        this
+          .$http
+          .post('/api/blog/new', data)
+          .then((res) => {
+            res = res.body;
+            if (res.status === OK) {
+              this.$set(this.form, '_id', this.form);
+              this.cbHandler('创建博客成功', 'success');
+            } else {
+              this.cbHandler('创建博客失败', 'danger');
+            }
+          });
+      }
+    },
+    cbHandler(message, type) {
+      this.cbMessage = message;
+      this.cbType = type;
+      this.$message({
+        message: this.cbMessage,
+        type: this.cbType,
+      });
+    },
+    extract_images_guid(str) {
+      const reg = new RegExp(/!\[\]\(\/images\/(\d+)\)/g);
+      let imagesList = [];
+      /* eslint-disable no-constant-condition */
+      while (true) {
+        let guid = reg.exec(str);
+        if (guid) {
+          guid = reg.exec(str)[1];
+          if (imagesList.indexOf(guid) === -1) imagesList.push(guid);
+        } else {
+          break;
+        }
+      }
+      return imagesList;
+    },
     setCover(dataUrl) {
       this.haveCover = true;
       this.$nextTick(() => {
@@ -137,8 +223,8 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        if (this.tags.length <= 4) {
-          this.tags.push(inputValue);
+        if (this.form.tags.length <= 4) {
+          this.form.tags.push(inputValue);
         } else {
           this.$message({
             message: '不能超过5个标签',

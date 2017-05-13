@@ -2,13 +2,13 @@
   <div class='admin-module'>
     <div class="platform">
       <div class="button-groups">
-        <router-link to="/editor">
+        <router-link to="/edit">
           <el-button icon="plus" type="primary">添加新博客</el-button>
         </router-link>
       </div>
     </div>
     <div class="blog-body">
-      <div class="card-wrapper" v-for="blog in blogs" :key="">
+      <div class="card-wrapper" v-for="(blog, index) in blogs" :key="">
         <el-card :body-style="{padding: '0px'}">
           <img :src="'/api/image/' + blog.cover_id" class="cover" alt="封面图片">
           <div style="padding: 14px;">
@@ -17,9 +17,9 @@
               {{blog.datetime}}
             </div>
           </div>
-          <div v-if="$route.fullPath.indexOf('admin') !== -1" class="btn-group">
-            <el-button type="success" icon="edit" @click="edit"></el-button>
-            <el-button type="danger" icon="delete" @click="del"></el-button>
+          <div v-if="$route.fullPath.indexOf('admin') !== -1" class="btn-group" :data-id="blog._id">
+            <el-button type="success" icon="edit" @click="edit(blog._id)"></el-button>
+            <el-button type="danger" icon="delete" @click="del(blog._id, index)"></el-button>
           </div>
         </el-card>
       </div>
@@ -35,6 +35,45 @@ export default{
     return {
       blogs: []
     };
+  },
+  methods: {
+    edit(e) {
+      debugger;
+      let id = e.currentTarget.parentNode.dataset.id;
+      this.$router.push(`/edit/${id}`);
+    },
+    del(id, index) {
+      this.$confirm('是否删除当前博客?','提示',{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this
+          .$http
+          .delete(`/api/blog/${id}/delete`)
+          .then((res) => {
+            res = res.body;
+            if (res.status === OK) {
+              this.blogs.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '删除成功',
+              });
+            } else {
+              this.$message({
+                type: 'warning',
+                message: '删除失败',
+              });
+            }
+          });
+      }).catch((err) => {
+        debugger;
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
+        });
+      })
+    }
   },
   beforeEnter() {
 

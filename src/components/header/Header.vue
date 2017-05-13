@@ -19,7 +19,7 @@
 export default {
   methods: {
     toIndex() {
-      if (this.$route.fullPath.indexOf('editor') !== -1) {
+      if (this.$route.fullPath.indexOf('edit') !== -1) {
         this.$router.push('/admin');
       } else {
         this.$router.push('/');
