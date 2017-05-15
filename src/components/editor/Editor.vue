@@ -24,12 +24,12 @@
               <!--标签和自动保存-->
               <el-row>
                 <el-col :span="9">
-                  <el-form-item label="标签">
+                  <el-form-item label="标签" >
                     <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
                       {{tag}}
                     </el-tag>
                     <!--必须要再绑定一个v-model才可以实现input的变动改变-->
-                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @blur="handleInputConfirm"  @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
                     </el-autocomplete>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                   </el-form-item>
@@ -155,7 +155,7 @@ export default {
       if (qs === '') return;
       this
         .$http
-        .post('/api/tag-suggestion', {'qs': qs})
+        .post('/api/tag-suggestion', { 'qs': qs })
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
@@ -163,8 +163,23 @@ export default {
             cb(data);
           }
         });
-    }, 600),
+    }, 1000),
     /* eslint-enable */
+    selectTag(item) {
+      let inputValue = this.inputValue;
+      this.inputVisible = false;
+      if (inputValue) {
+        if (this.form.tags.length <= 4) {
+          this.form.tags.push(inputValue);
+        } else {
+          this.$message({
+            message: '不能超过5个标签',
+            type: 'warning',
+          });
+        }
+      }
+      this.inputValue = '';
+    },
     addNewCategory(nval) {
       // 创建的时候用的val,但是真正变动的时候却是id
       if (nval === '') {
@@ -267,6 +282,7 @@ export default {
       });
     },
     handleInputConfirm() {
+      debugger;
       let inputValue = this.inputValue;
       if (inputValue) {
         if (this.form.tags.length <= 4) {
