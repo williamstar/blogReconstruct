@@ -43,10 +43,10 @@
             <!--封面-->
             <el-col :span="4" class="clearfix">
               <div class="cover-wrapper">
-                <el-button v-if="!haveCover && !form.cover_id" class="btn-cover" @click="selectCover">
+                <el-button v-if="!haveCover && !form.coverImg" class="btn-cover" @click="selectCover">
                   <i class="el-icon-plus icon-plus"></i>
                 </el-button>
-                <img v-else :src="`/api/image/${form.cover_id}`" class="upload-cover" alt="封面" @click="selectCover">
+                <img v-else :src="`/api/image/${form.coverImg}`" class="upload-cover" alt="封面" @click="selectCover">
                 <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
               </div>
             </el-col>
@@ -93,7 +93,7 @@ export default {
         title: '',
         categoryId: '',
         tags: [],
-        cover_id: '', // 蛇纹命令兼容mongodb早期设置
+        coverImg: '', // 蛇纹命令兼容mongodb早期设置
         text: 'learn well, finish your dream',
       },
       editor: {},
@@ -239,8 +239,8 @@ export default {
       this.$refs.uploadCover.open();
     },
     removeTag(tag) {
-      let index = this.tags.indexOf(tag);
-      this.tags.splice(index, 1);
+      let index = this.form.tags.indexOf(tag);
+      this.form.tags.splice(index, 1);
     },
     showInput() {
       this.inputVisible = true;
