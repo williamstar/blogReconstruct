@@ -28,8 +28,9 @@
                     <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
                       {{tag}}
                     </el-tag>
-                    <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
-                    </el-input>
+                    <!--必须要再绑定一个v-model才可以实现input的变动改变-->
+                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                    </el-autocomplete>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                   </el-form-item>
                 </el-col>
@@ -75,6 +76,8 @@ import $ from 'jquery';
 import editormd from 'editormd';
 /* eslint-enable */
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
+/* eslint-disable no-unused-vars*/
+import _ from 'lodash';
 
 const OK = 'success';
 
@@ -83,7 +86,7 @@ export default {
     return {
       categories: '',
       inputVisible: false,
-      inputValue: '',
+      inputValue: '王',
       autoSave: true,
       haveCover: false,
       loading: false,
@@ -147,6 +150,21 @@ export default {
     });
   },
   methods: {
+    /* eslint-disable */
+    tagSuggestion: _.debounce(function (qs, cb) {
+      if (qs === '') return;
+      this
+        .$http
+        .post('/api/tag-suggestion', {'qs': qs})
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            const data = res.data.map(tag => ({ value: tag })) || [];
+            cb(data);
+          }
+        });
+    }, 600),
+    /* eslint-enable */
     addNewCategory(nval) {
       // 创建的时候用的val,但是真正变动的时候却是id
       if (nval === '') {
@@ -245,7 +263,7 @@ export default {
     showInput() {
       this.inputVisible = true;
       this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus();
+        this.$refs.saveTagInput.$el.querySelector('input').focus();
       });
     },
     handleInputConfirm() {
