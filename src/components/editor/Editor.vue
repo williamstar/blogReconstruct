@@ -15,8 +15,8 @@
                 </el-col>
                 <el-col :span="9" :offset="3">
                   <el-form-item label="分类">
-                    <el-select v-model="form.category_id" clearable>
-                      <el-option v-for="category in categories" :value="category._id" :key="category._id" :label="category.category"> </el-option>
+                    <el-select v-model="form.categoryId" filterable allow-create clearable @change="addNewCategory">
+                      <el-option v-for="category in categories" :value="category.id" :key="category.id" :label="category.val"> </el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -91,7 +91,7 @@ export default {
       cbType: '',
       form: {
         title: '',
-        category_id: '',
+        categoryId: '',
         tags: [],
         cover_id: '', // 蛇纹命令兼容mongodb早期设置
         text: 'learn well, finish your dream',
@@ -133,7 +133,11 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
-            this.categories = res.data;
+            this.categories = res.data || [];
+            // this.categories.push({
+            //   id: '',
+            //   val: '添加新条目',
+            // });
           }
         });
     }
@@ -143,6 +147,30 @@ export default {
     });
   },
   methods: {
+    addNewCategory(nval) {
+      // 创建的时候用的val,但是真正变动的时候却是id
+      if (nval === '') {
+        return;
+      }
+      if (!this.categories.some(category => category.val === nval || category.id === nval)) {
+        // 创建新的category
+        this
+          .$http
+          .post('/api/category/new', { category: nval })
+          .then((res) => {
+            res = res.body;
+            if (res.status === OK) {
+              this.form.categoryId = res.data;
+              this.categories.push({
+                id: res.data,
+                val: nval,
+              });
+            } else {
+              this.$message.error('创建失败');
+            }
+          });
+      }
+    },
     submit() {
       this.$set(this.form, 'text', this.editor.getMarkdown());
       let imageList = this.extract_images_guid(this.form.text);
