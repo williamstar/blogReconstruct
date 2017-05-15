@@ -49,7 +49,7 @@ export default {
   },
 };
 </script>
-<style lang='scss' scoped>
+<style lang='scss'>
 .login-module {
   position: relative;
   width: 500px;
@@ -58,6 +58,9 @@ export default {
   padding-top: 100px;
   .el-form-item {
     margin-bottom: 50px;
+    label {
+      color: #fff;
+    }
   }
   .login-button {
     position: absolute;

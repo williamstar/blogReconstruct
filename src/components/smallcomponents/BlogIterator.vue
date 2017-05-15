@@ -1,0 +1,101 @@
+<template>
+  <div class='blog-iterator-module'>
+    <router-link :to="`/blog/${blog._id}`" class="card-wrapper" v-for="(blog, index) in blogs" :key="blog._id">
+      <el-card :body-style="{padding: '0px'}">
+        <img :src="'/api/image/' + blog.cover_id" class="cover" alt="封面图片">
+        <div style="padding: 14px;">
+          <span>{{blog.title}}</span>
+          <div style="margin-top: 6px;">
+            {{blog.datetime}}
+          </div>
+        </div>
+        <div v-if="admin" class="btn-group" :data-id="blog._id">
+          <el-button type="success" icon="edit" @click.prevent.stop="edit(blog._id)"></el-button>
+          <el-button type="danger" icon="delete" @click.prevent.stop="del(blog._id, index)"></el-button>
+        </div>
+      </el-card>
+    </router-link>
+  </div>
+</template>
+<script type='text/javascript'>
+const OK = 'success';
+
+export default{
+  props: {
+    blogs: Array,
+    admin: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+  },
+  methods: {
+    edit(id) {
+      this.$router.push(`/edit/${id}`);
+    },
+    del(id, index) {
+      this.$confirm('是否删除当前博客?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this
+          .$http
+          .delete(`/api/blog/${id}/delete`)
+          .then((res) => {
+            res = res.body;
+            if (res.status === OK) {
+              this.blogs.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '删除成功',
+              });
+            } else {
+              this.$message({
+                type: 'warning',
+                message: '删除失败',
+              });
+            }
+          });
+      }).catch(() => {
+        debugger;
+        this.$message({
+          type: 'info',
+          message: '已取消删除',
+        });
+      });
+    },
+  },
+};
+</script>
+<style lang='scss' scoped>
+.blog-iterator-module {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  .card-wrapper {
+    position: relative;
+    margin-top: 20px;
+    width: 300px;
+    margin: 20px 20px;
+    cursor: pointer;
+    .cover {
+      max-width: 100%;
+      object-fit: cover;
+    }
+    .btn-group {
+      opacity: 0;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      transition: opacity .3s;
+    }
+    &:hover {
+      .btn-group {
+        opacity: 1;
+      }
+    }
+  }
+}
+</style>

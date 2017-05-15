@@ -23,7 +23,7 @@ import marked from 'marked';
 /* eslint-enable */
 
 const OK = 'success';
-export default{
+export default {
   data() {
     return {
       blog: {
@@ -39,6 +39,8 @@ export default{
         res = res.body;
         if (res.status === OK) {
           this.blog = res.data;
+          // 清除掉原先的html
+          document.querySelector('#blog-text').innerHTML = '';
           this.editor = editormd.markdownToHTML('blog-text', {
             markdown: this.blog.text,
             htmlDecode: true,
@@ -60,7 +62,7 @@ export default{
     color: #fff;
   }
   .detail {
-    margin: 10px;
+    margin: 30px 10px 10px;
     display: flex;
     .tag {
       margin-right: 5px;

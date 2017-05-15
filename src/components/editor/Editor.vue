@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="4">left-part</el-col>
       <el-col :span="16">
-        <el-form ref="form" label-width="40px">
+        <el-form label-width="40px">
           <el-row>
             <el-col :span="20">
               <!--标题和时间-->
@@ -241,14 +241,14 @@ export default {
   },
 };
 </script>
-<style lang='scss' scoped>
+<style lang='scss'>
 .editor-module {
   padding-top: 30px;
+  .el-form-item__label {
+    color: #fff;
+  }
   .el-form {
     padding-bottom: 60px;
-    label {
-      color: #fff;
-    }
     .tag {
       margin-right: 5px;
     }
