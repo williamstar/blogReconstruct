@@ -29,7 +29,7 @@
                       {{tag}}
                     </el-tag>
                     <!--必须要再绑定一个v-model才可以实现input的变动改变-->
-                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="cancelInput" @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="tagCancel" @keyup.enter.native="tagConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
                     </el-autocomplete>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                   </el-form-item>
@@ -140,6 +140,7 @@ export default {
   },
   methods: {
     /* eslint-disable */
+    // 提供tag的建议
     tagSuggestion: _.debounce(function (qs, cb) {
       if (qs === '') return;
       this
@@ -154,6 +155,7 @@ export default {
         });
     }, 1000),
     /* eslint-enable */
+    // 选择tag
     selectTag(item) {
       let inputValue = this.inputValue;
       this.inputVisible = false;
@@ -169,6 +171,7 @@ export default {
       }
       this.inputValue = '';
     },
+    // 添加新的分类
     addNewCategory(nval) {
       // 创建的时候用的val,但是真正变动的时候却是id
       if (nval === '') {
@@ -236,6 +239,7 @@ export default {
         type: this.cbType,
       });
     },
+    // 抽取markdown中的图片信息
     extract_images_guid(str) {
       const reg = new RegExp(/!\[\]\(\/images\/(\d+)\)/g);
       let imagesList = [];
@@ -251,6 +255,7 @@ export default {
       }
       return imagesList;
     },
+    // 设置封面 or 上传封面
     setCover(dataUrl, hash) {
       this.haveCover = true;
       this.$nextTick(() => {
@@ -275,24 +280,29 @@ export default {
         }
       });
     },
+    // 选择封面
     selectCover() {
       this.$refs.uploadCover.open();
     },
+    // 移除标签
     removeTag(tag) {
       let index = this.form.tags.indexOf(tag);
       this.form.tags.splice(index, 1);
     },
+    // 显示tag的输入
     showInput() {
       this.inputVisible = true;
       this.$nextTick(() => {
         this.$refs.saveTagInput.$el.querySelector('input').focus();
       });
     },
-    cancelInput() {
+    // 取消tag的输入
+    tagCancel() {
       this.inputValue = '';
       this.inputVisible = false;
     },
-    handleInputConfirm() {
+    // 确认tag
+    tagConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
         if (this.form.tags.length <= 4) {
