@@ -29,7 +29,7 @@
                       {{tag}}
                     </el-tag>
                     <!--必须要再绑定一个v-model才可以实现input的变动改变-->
-                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @blur="handleInputConfirm"  @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="cancelInput"  @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
                     </el-autocomplete>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                   </el-form-item>
@@ -281,8 +281,11 @@ export default {
         this.$refs.saveTagInput.$el.querySelector('input').focus();
       });
     },
+    cancelInput() {
+      this.inputValue = '';
+      this.inputVisible = false;
+    },
     handleInputConfirm() {
-      debugger;
       let inputValue = this.inputValue;
       if (inputValue) {
         if (this.form.tags.length <= 4) {
