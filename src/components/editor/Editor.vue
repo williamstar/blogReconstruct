@@ -70,7 +70,6 @@
   </div>
 </template>
 <script type='text/javascript'>
-import { currentTime } from '@/common/js/time';
 /* eslint-disable */
 import $ from 'jquery';
 import editormd from 'editormd';
@@ -113,6 +112,7 @@ export default {
       imageUploadURL: '/api/upload',
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
     });
+    // 警告，这边有bug，如果不存blogId的情况
     if (this.$route.params.blogId) {
       this
         .$http
@@ -198,10 +198,8 @@ export default {
     },
     submit() {
       this.$set(this.form, 'text', this.editor.getMarkdown());
-      let imageList = this.extract_images_guid(this.form.text);
-      let time = currentTime();
+      let imageList = this.extractImageGuid(this.form.text);
       let data = Object.assign(this.form);
-      data.time = time;
       data.images = imageList;
       if (this.form._id) {
         // 存在id则是修改
@@ -217,9 +215,14 @@ export default {
             }
           });
       } else {
+        // 需要用formdate上传数据
+        let fd = new FormData();
+        let file = document.querySelector('.hidden-upload-cover').files[0];
+        fd.append('cover', file);
+        fd.append('blog', JSON.stringify(this.form));
         this
           .$http
-          .post('/api/blog/new', data)
+          .post('/api/blog/new', fd)
           .then((res) => {
             res = res.body;
             if (res.status === OK) {
@@ -240,7 +243,7 @@ export default {
       });
     },
     // 抽取markdown中的图片信息
-    extract_images_guid(str) {
+    extractImageGuid(str) {
       const reg = new RegExp(/!\[\]\(\/images\/(\d+)\)/g);
       let imagesList = [];
       /* eslint-disable no-constant-condition */
@@ -258,6 +261,7 @@ export default {
     // 设置封面 or 上传封面
     setCover(dataUrl, hash) {
       this.haveCover = true;
+      this.form.coverImg = hash;
       this.$nextTick(() => {
         document.querySelector('.upload-cover').src = dataUrl;
         // 如果当前为修改的情况下就上传图片，否则不更新
@@ -269,7 +273,6 @@ export default {
             .$http
             .post(`/api/upload?guid=${hash}`, fd)
             .then((res) => {
-              debugger;
               res = res.body;
               if (res.status === OK) {
                 this.$message.success('上传封面成功');

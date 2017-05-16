@@ -1,26 +1,28 @@
 <template>
   <div class='blog-iterator-module'>
-    <router-link :to="`/blog/${blog._id}`" class="card-wrapper" v-for="(blog, index) in blogs" :key="blog._id">
+    <router-link :to="`/blog/${blog.id}`" class="card-wrapper" v-for="(blog, index) in blogs" :key="blog._id">
       <el-card :body-style="{padding: '0px'}">
-        <img :src="'/api/image/' + blog.cover_id" class="cover" alt="封面图片">
+        <img :src="'/api/image/' + blog.coverImg" class="cover" alt="封面图片">
         <div style="padding: 14px;">
           <span>{{blog.title}}</span>
           <div style="margin-top: 6px;">
-            {{blog.datetime}}
+            {{blog.createDate | formateTime}}
           </div>
         </div>
         <div v-if="admin" class="btn-group" :data-id="blog._id">
-          <el-button type="success" icon="edit" @click.prevent.stop="edit(blog._id)"></el-button>
-          <el-button type="danger" icon="delete" @click.prevent.stop="del(blog._id, index)"></el-button>
+          <el-button type="success" icon="edit" @click.prevent.stop="edit(blog.id)"></el-button>
+          <el-button type="danger" icon="delete" @click.prevent.stop="del(blog.id, index)"></el-button>
         </div>
       </el-card>
     </router-link>
   </div>
 </template>
 <script type='text/javascript'>
+import { currentTime as formateTime } from '@/common/js/time';
+
 const OK = 'success';
 
-export default{
+export default {
   props: {
     blogs: Array,
     admin: {
@@ -66,6 +68,9 @@ export default{
         });
       });
     },
+  },
+  filters: {
+    formateTime,
   },
 };
 </script>
