@@ -24,12 +24,12 @@
               <!--标签和自动保存-->
               <el-row>
                 <el-col :span="9">
-                  <el-form-item label="标签" >
+                  <el-form-item label="标签">
                     <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
                       {{tag}}
                     </el-tag>
                     <!--必须要再绑定一个v-model才可以实现input的变动改变-->
-                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="cancelInput"  @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="cancelInput" @keyup.enter.native="handleInputConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
                     </el-autocomplete>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                   </el-form-item>
@@ -112,9 +112,6 @@ export default {
       imageUpload: true,
       imageUploadURL: '/api/upload',
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
-      // theme: 'dark',
-      // previewTheme: 'dark',
-      // editorTheme: 'pastel-on-dark',
     });
     if (this.$route.params.blogId) {
       this
@@ -137,17 +134,9 @@ export default {
           res = res.body;
           if (res.status === OK) {
             this.categories = res.data || [];
-            // this.categories.push({
-            //   id: '',
-            //   val: '添加新条目',
-            // });
           }
         });
     }
-
-    document.addEventListener('resize', () => {
-      this.editor.width = '100%';
-    });
   },
   methods: {
     /* eslint-disable */
@@ -262,10 +251,28 @@ export default {
       }
       return imagesList;
     },
-    setCover(dataUrl) {
+    setCover(dataUrl, hash) {
       this.haveCover = true;
       this.$nextTick(() => {
         document.querySelector('.upload-cover').src = dataUrl;
+        // 如果当前为修改的情况下就上传图片，否则不更新
+        if (this.form.blogId) {
+          let file = document.querySelector('.hidden-upload-cover').files[0];
+          let fd = new FormData();
+          fd.append('editormd-image-file', file);
+          this
+            .$http
+            .post(`/api/upload?guid=${hash}`, fd)
+            .then((res) => {
+              debugger;
+              res = res.body;
+              if (res.status === OK) {
+                this.$message.success('上传封面成功');
+              } else {
+                this.$message.error('上传失败');
+              }
+            });
+        }
       });
     },
     selectCover() {
