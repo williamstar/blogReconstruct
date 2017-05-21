@@ -91,6 +91,7 @@ export default {
       loading: false,
       cbMessage: '',
       cbType: '',
+      originForm: {},
       form: {
         title: '',
         categoryId: '',
@@ -122,6 +123,7 @@ export default {
           if (res.status === OK) {
             this.form = res.data.blog;
             this.categories = res.data.categories;
+            this.originForm = Object.assign({}, res.data.blog);
             // 设置编辑器的内容
             this.editor.settings.value = this.form.text;
           }
@@ -199,10 +201,30 @@ export default {
     submit() {
       this.$set(this.form, 'text', this.editor.getMarkdown());
       let imageList = this.extractImageGuid(this.form.text);
-      let data = Object.assign(this.form);
-      data.images = imageList;
-      if (this.form._id) {
+      let data = {};
+      if (imageList.length > 0) data.images = imageList;
+      if (this.form.id) {
         // 存在id则是修改
+        // 比较和之前的form的值在哪里有区别，加入difference中，并提交
+        Object.keys(this.originForm).forEach((key) => {
+          if (Array.isArray(this.form[key])) {
+            // tags的比较
+            if (this.form[key].length !== this.originForm[key]) {
+              data[key] = this.form[key];
+            } else {
+              for (let i = 0; i < this.form[key].length; i += 1) {
+                if (this.form[key][i] !== this.originForm[key][i]) {
+                  data[key] = this.form[key];
+                  break;
+                }
+              }
+            }
+          } else {
+            if (this.originForm[key] !== this.form[key]) {
+              data[key] = this.form[key];
+            }
+          }
+        });
         this
           .$http
           .put(`/api/blog/${this.form._id}/edit`, data)
