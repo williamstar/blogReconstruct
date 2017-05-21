@@ -85,7 +85,7 @@ export default {
     return {
       categories: '',
       inputVisible: false,
-      inputValue: '王',
+      inputValue: '',
       autoSave: true,
       haveCover: false,
       loading: false,

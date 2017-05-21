@@ -8,7 +8,7 @@
       <span class="tags-wrapper">
         <el-tag v-for="(tag, index) in blog.tags" class="tag" :key="tag">{{tag}}</el-tag>
       </span>
-      <span class="datetime">{{blog.datetime}}</span>
+      <span class="datetime">{{blog.createDate | currentTime}}</span>
     </div>
     <div class="blog-wrapper">
       <div id="blog-text"></div>
@@ -21,6 +21,7 @@ import $ from 'jquery';
 import editormd from 'editormd';
 import marked from 'marked';
 /* eslint-enable */
+import { currentTime } from '@/common/js/time';
 
 const OK = 'success';
 export default {
@@ -39,6 +40,7 @@ export default {
         res = res.body;
         if (res.status === OK) {
           this.blog = res.data;
+          document.title = this.blog.title;
           // 清除掉原先的html
           document.querySelector('#blog-text').innerHTML = '';
           this.editor = editormd.markdownToHTML('blog-text', {
@@ -48,6 +50,9 @@ export default {
           });
         }
       });
+  },
+  filters: {
+    currentTime,
   },
 };
 </script>
@@ -64,12 +69,13 @@ export default {
   .detail {
     margin: 30px 10px 10px;
     display: flex;
-    .tag {
-      margin-right: 5px;
+    align-items: center;
+    color: #fff;
+    .tags-wrapper {
+      margin-left: 30px;
     }
     .datetime {
       margin-left: auto;
-      color: #fff;
     }
   }
   .blog-wrapper {
