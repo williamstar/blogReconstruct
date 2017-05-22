@@ -8,26 +8,34 @@ import Blog from '@/components/blog/Blog';
 import Index from '@/components/index/Index';
 import Personal from '@/components/personal/Personal';
 import Project from '@/components/project/Project';
+import blogIterator from '@/components/smallcomponents/BlogIterator';
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/index',
+      alias: '/',
       component: Index,
+      children: [
+        {
+          path: '',
+          component: blogIterator,
+        },
+        {
+          path: 'personal',
+          component: Personal,
+        },
+        {
+          path: 'project',
+          component: Project,
+        },
+      ],
     },
     {
       path: '/william/register',
       component: Register,
-    },
-    {
-      path: '/personal',
-      component: Personal,
-    },
-    {
-      path: '/project',
-      component: Project,
     },
     {
       path: '/edit/:blogId?',

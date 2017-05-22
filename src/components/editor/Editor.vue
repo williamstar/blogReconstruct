@@ -102,7 +102,7 @@ export default {
       editor: {},
     };
   },
-  activated() {
+  mounted() {
     this.editor = editormd('my-editor', {
       width: '100%',
       height: 800,
@@ -234,7 +234,7 @@ export default {
               if (res.status === OK) {
                 this.cbHandler('修改博客成功', 'success');
               } else {
-                this.cbHandler('修改博客失败', 'danger');
+                this.cbHandler('修改博客失败', 'warning');
               }
             });
         }
@@ -250,7 +250,7 @@ export default {
           .then((res) => {
             res = res.body;
             if (res.status === OK) {
-              this.$set(this.form, '_id', this.form);
+              this.$set(this.form, 'id', res.data);
               this.cbHandler('创建博客成功', 'success');
             } else {
               this.cbHandler('创建博客失败', 'danger');

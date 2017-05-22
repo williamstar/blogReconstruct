@@ -7,7 +7,7 @@
         <router-link to="/project">项目</router-link>
       </nav>
     </div>
-    <blog-iterator :blogs="blogs"></blog-iterator>
+    <router-view :blogs="blogs"></router-view>
   </div>
 </template>
 <script type='text/javascript'>

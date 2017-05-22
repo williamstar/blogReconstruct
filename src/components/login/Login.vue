@@ -5,7 +5,7 @@
         <el-input v-model="user.userName"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="user.passwd" @keyup.enter="lgoin"></el-input>
+        <el-input v-model="user.passwd" @keyup.native.enter="login"></el-input>
       </el-form-item>
       <el-button type="primary" size="large" class="login-button" @click="login">登陆</el-button>
     </el-form>
