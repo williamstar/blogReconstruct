@@ -123,7 +123,7 @@ export default {
           if (res.status === OK) {
             this.form = res.data.blog;
             this.categories = res.data.categories;
-            this.originForm = Object.assign({}, res.data.blog);
+            this.originForm = JSON.parse(JSON.stringify(this.form));
             // 设置编辑器的内容
             this.editor.settings.value = this.form.text;
           }
@@ -209,7 +209,7 @@ export default {
         Object.keys(this.originForm).forEach((key) => {
           if (Array.isArray(this.form[key])) {
             // tags的比较
-            if (this.form[key].length !== this.originForm[key]) {
+            if (this.form[key].length !== this.originForm[key].length) {
               data[key] = this.form[key];
             } else {
               for (let i = 0; i < this.form[key].length; i += 1) {
@@ -224,18 +224,20 @@ export default {
               data[key] = this.form[key];
             }
           }
-        });
-        this
-          .$http
-          .put(`/api/blog/${this.form._id}/edit`, data)
-          .then((res) => {
-            res = res.body;
-            if (res.status === OK) {
-              this.cbHandler('修改博客成功', 'success');
-            } else {
-              this.cbHandler('修改博客失败', 'danger');
-            }
-          });
+        }, this);
+        if (Object.keys(data).length > 0) {
+          this
+            .$http
+            .put(`/api/blog/${this.form.id}/edit`, data)
+            .then((res) => {
+              res = res.body;
+              if (res.status === OK) {
+                this.cbHandler('修改博客成功', 'success');
+              } else {
+                this.cbHandler('修改博客失败', 'danger');
+              }
+            });
+        }
       } else {
         // 需要用formdate上传数据
         let fd = new FormData();
@@ -287,7 +289,7 @@ export default {
       this.$nextTick(() => {
         document.querySelector('.upload-cover').src = dataUrl;
         // 如果当前为修改的情况下就上传图片，否则不更新
-        if (this.form.blogId) {
+        if (this.form.id) {
           let file = document.querySelector('.hidden-upload-cover').files[0];
           let fd = new FormData();
           fd.append('editormd-image-file', file);
@@ -297,7 +299,7 @@ export default {
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
-                this.$message.success('上传封面成功');
+                this.submit();
               } else {
                 this.$message.error('上传失败');
               }
