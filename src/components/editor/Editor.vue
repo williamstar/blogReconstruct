@@ -36,7 +36,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item label="自动保存" label-width="80px">
-                    <el-switch v-model="autoSave"></el-switch>
+                    <el-switch v-model="autoSave" @change="saveStatusHandler"></el-switch>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -53,7 +53,7 @@
             </el-col>
           </el-row>
           <!--博客框-->
-          <div class="editor-wrapper">
+          <div class="editor-wrapper" >
             <input type="hidden" id="text" :value="form.text">
             <div id="my-editor">
             </div>
@@ -62,6 +62,10 @@
             <el-button type="primary" size="large" @click="submit">
               提交
             </el-button>
+            <el-button type="primary" size="large" @click="submit(false)">
+              保存为草稿
+            </el-button>
+            <el-button type="danger" @click="resetForm">重置表单</el-button>
           </div>
         </el-form>
       </el-col>
@@ -92,6 +96,7 @@ export default {
       cbMessage: '',
       cbType: '',
       originForm: {},
+      timer: 0,
       form: {
         title: '',
         categoryId: '',
@@ -102,11 +107,31 @@ export default {
       editor: {},
     };
   },
+  activated() {
+    if (this.autoSave) {
+      this.timer = setInterval(this.submit, 30000);
+    }
+  },
+  deactivated() {
+    clearInterval(this.timer);
+  },
+  created() {
+    let config = localStorage.getItem('config');
+    if (!config) {
+      // 生成一份配置文件
+      config = {
+        autoSave: true,
+      };
+      localStorage.setItem('config', JSON.stringify(config));
+    } else {
+      config = JSON.parse(config);
+    }
+    this.autoSave = config.autoSave;
+  },
   mounted() {
     this.editor = editormd('my-editor', {
       width: '100%',
       height: 800,
-      value: this.form.text,
       saveHTMLToTextarea: true,
       path: '/static/lib/',
       imageUpload: true,
@@ -115,6 +140,7 @@ export default {
     });
     // 警告，这边有bug，如果不存blogId的情况
     if (this.$route.params.blogId) {
+      this.loadMarkdown = true;
       this
         .$http
         .get(`/api/blog/${this.$route.params.blogId}/edit`)
@@ -125,7 +151,10 @@ export default {
             this.categories = res.data.categories;
             this.originForm = JSON.parse(JSON.stringify(this.form));
             // 设置编辑器的内容
-            this.editor.settings.value = this.form.text;
+            let self = this;
+            setTimeout(() => {
+              self.editor.setMarkdown(self.form.text);
+            }, 1000);
           }
         });
     } else {
@@ -198,7 +227,9 @@ export default {
           });
       }
     },
-    submit() {
+    // 提交表单
+    submit(draft) {
+      console.log('execute');
       this.$set(this.form, 'text', this.editor.getMarkdown());
       let imageList = this.extractImageGuid(this.form.text);
       let data = {};
@@ -343,6 +374,26 @@ export default {
       }
       this.inputVisible = false;
       this.inputValue = '';
+    },
+    saveStatusHandler() {
+      if (this.autoSave) {
+        this.timer = setInterval(this.submit, 30000);
+      } else {
+        clearInterval(this.timer);
+      }
+      let config = {
+        autoSave: this.autoSave,
+      };
+      localStorage.setItem('config', JSON.stringify(config));
+    },
+    resetForm() {
+      this.form.title = '';
+      this.form.categoryId = '';
+      this.form.tags = [];
+      this.form.text = '';
+      this.form.coverImg = '';
+      this.haveCover = false;
+      this.editor.setMarkdown('');
     },
   },
   components: {
