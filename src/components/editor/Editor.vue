@@ -53,7 +53,7 @@
             </el-col>
           </el-row>
           <!--博客框-->
-          <div class="editor-wrapper" >
+          <div class="editor-wrapper">
             <input type="hidden" id="text" :value="form.text">
             <div id="my-editor">
             </div>
@@ -62,8 +62,11 @@
             <el-button type="primary" size="large" @click="submit">
               提交
             </el-button>
-            <el-button type="primary" size="large" @click="submit(false)">
+            <el-button v-if="!this.form.id" type="primary" size="large" @click="saveAsDraft">
               保存为草稿
+            </el-button>
+            <el-button v-if="this.form.id && this.form.isDraft" type="primary" size="large" @click="publish">
+              发布
             </el-button>
             <el-button type="danger" @click="resetForm">重置表单</el-button>
           </div>
@@ -100,6 +103,7 @@ export default {
       form: {
         title: '',
         categoryId: '',
+        isDraft: 0,
         tags: [],
         coverImg: '', // 蛇纹命令兼容mongodb早期设置
         text: 'learn well, finish your dream',
@@ -109,7 +113,45 @@ export default {
   },
   activated() {
     if (this.autoSave) {
-      this.timer = setInterval(this.submit, 30000);
+      let self = this;
+      this.timer = setInterval(() => {
+        if (self.form.id) {
+          // 如果存在id，则正常保存
+          self.submit();
+        } else {
+          // 如果无id，则保存为草稿
+          self.saveAsDraft();
+        }
+      }, 30000);
+    }
+    if (this.$route.params.blogId) {
+      this.loadMarkdown = true;
+      this
+        .$http
+        .get(`/api/blog/${this.$route.params.blogId}/edit`)
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.form = res.data.blog;
+            this.categories = res.data.categories;
+            this.originForm = JSON.parse(JSON.stringify(this.form));
+            // 设置编辑器的内容, editormd实例需要一定的延迟
+            let self = this;
+            setTimeout(() => {
+              self.editor.setMarkdown(self.form.text);
+            }, 1000);
+          }
+        });
+    } else {
+      this
+        .$http
+        .get('/api/blog/new')
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.categories = res.data || [];
+          }
+        });
     }
   },
   deactivated() {
@@ -139,35 +181,6 @@ export default {
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
     });
     // 警告，这边有bug，如果不存blogId的情况
-    if (this.$route.params.blogId) {
-      this.loadMarkdown = true;
-      this
-        .$http
-        .get(`/api/blog/${this.$route.params.blogId}/edit`)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.form = res.data.blog;
-            this.categories = res.data.categories;
-            this.originForm = JSON.parse(JSON.stringify(this.form));
-            // 设置编辑器的内容
-            let self = this;
-            setTimeout(() => {
-              self.editor.setMarkdown(self.form.text);
-            }, 1000);
-          }
-        });
-    } else {
-      this
-        .$http
-        .get('/api/blog/new')
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.categories = res.data || [];
-          }
-        });
-    }
   },
   methods: {
     /* eslint-disable */
@@ -227,9 +240,18 @@ export default {
           });
       }
     },
+    // 从草稿提交成博客
+    publish() {
+      this.form.isDraft = 0;
+      this.submit();
+    },
+    // 保存为草稿
+    saveAsDraft() {
+      this.form.isDraft = 1;
+      this.submit();
+    },
     // 提交表单
-    submit(draft) {
-      console.log('execute');
+    submit() {
       this.$set(this.form, 'text', this.editor.getMarkdown());
       let imageList = this.extractImageGuid(this.form.text);
       let data = {};
