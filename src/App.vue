@@ -40,7 +40,7 @@ export default {
   width: 100%;
   height: 100%;
   .main {
-    height: calc(100% - 174px);
+    height: calc(100% - 114px);
     .content {
       min-height: 100%;
       margin-bottom: -84px;

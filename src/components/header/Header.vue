@@ -35,7 +35,7 @@ export default {
   .content {
     width: 1020px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 5px;
     color: #12A2BC;
     @media screen and (max-width: 1020px) {
       width: auto;
@@ -48,10 +48,10 @@ export default {
       display: flex;
       font-family: 'Chelsea Market';
       text-transform: uppercase;
-      font-size: 36px;
+      font-size: 24px;
       flex-direction: column;
       @media screen and (max-width: 768px) {
-        font-size: 42px;
+        font-size: 36px;
         .last-name {
           padding-right: 20px;
           text-align: right;
@@ -78,7 +78,7 @@ export default {
       @media screen and (max-width: 768px) {
         display: none;
       }
-      max-height: 150px;
+      max-height: 100px;
       object-fit: cover;
     }
   }

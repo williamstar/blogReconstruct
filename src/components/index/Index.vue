@@ -21,6 +21,9 @@ export default{
       blogs: [],
     };
   },
+  activated() {
+    document.title = 'william';
+  },
   created() {
     this
       .$http
@@ -47,7 +50,7 @@ export default{
       display: flex;
       justify-content: space-around;
       a {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: 500;
         color: #fff;
       }
