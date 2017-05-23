@@ -5,6 +5,12 @@
         <router-link to="/edit">
           <el-button icon="plus" type="primary">添加新博客</el-button>
         </router-link>
+        <router-link to="/config">
+          <el-button type="success">
+            <i class="fa fa-power-off fa-lg"></i>
+            设置
+          </el-button>
+        </router-link>
         <router-link to="/logout">
           <el-button type="danger" @click.prevent="logout">
             <i class="fa fa-power-off fa-lg"></i>
@@ -15,14 +21,23 @@
     </div>
     <blog-iterator :blogs="blogs" :admin="true"></blog-iterator>
     <div class="pagination">
-      <span class="total-num">总条数 {{total}}</span>
-      <span @click="prePage" class="changepage" :class="{'forbid': currentPage === 1}">上一页</span>
-      <span v-for="i in pageSize" class="page-btn" :class="{'light': i === currentPage}">
+      <span @click="jump(1)" class="changepage f-l-page">
+        <i class="el-icon-d-arrow-left"></i>
+      </span>
+      <span @click="prePage" class="changepage" :class="{'forbid': currentPage === 1}">
+        <i class="el-icon-arrow-left"></i>
+      </span>
+      <span v-for="i in pageSize" class="page-btn" :class="{'light': i === currentPage}" @click="jump(i)">
         <span class="page-text">
           {{i}}
         </span>
       </span>
-      <span @click="nextPage" class="changepage" :class="{'forbid': currentPage === pageSize}">下一页</span>
+      <span @click="nextPage" class="changepage" :class="{'forbid': currentPage === pageSize}">
+        <i class="el-icon-arrow-right"></i>
+      </span>
+      <span @click="jump(pageSize)" class="changepage f-l-page">
+        <i class="el-icon-d-arrow-right"></i>
+      </span>
     </div>
   </div>
 </template>
@@ -65,21 +80,7 @@ export default {
   },
   activated() {
     document.title = '后台管理';
-    let page = this.$route.query.page;
-    /* eslint-disable */
-    page = page ? page : 0;
-    /* eslint-enable */
-    let defaultUrl = '/api/admin';
-    defaultUrl = `/api/admin?page=${page}`;
-    this
-      .$http
-      .get(defaultUrl)
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.blogs = res.data;
-        }
-      });
+    this.getBlog();
   },
   computed: {
     pageSize() {
@@ -98,6 +99,19 @@ export default {
           }
         });
     },
+    getBlog() {
+      let defaultUrl = '/api/admin';
+      defaultUrl = `/api/admin?page=${this.currentPage}`;
+      this
+        .$http
+        .get(defaultUrl)
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.blogs = res.data;
+          }
+        });
+    },
     prePage() {
       if (this.currentPage > 1) {
         this.currentPage -= 1;
@@ -107,6 +121,9 @@ export default {
       if (this.currentPage < this.pageSize) {
         this.currentPage += 1;
       }
+    },
+    jump(page) {
+      this.currentPage = page;
     },
   },
   components: {
@@ -118,22 +135,27 @@ export default {
 .admin-module {
   padding: 10px;
   .pagination {
-    height: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 0;
     color: #fff;
     font-size: 17px;
+    .f-l-page {
+      margin: 0 8px;
+    }
     .page-btn {
-      margin: 0 6px;
+      margin: 0 15px;
       display: inline-block;
+      padding: 2px 2px;
       background: #fff;
+      cursor: pointer;
       &.light {
         background: #20a0ff;
         .page-text {
           color: #fff;
         }
-      }
-      .page-text {
-        padding: 7px 5px;
-        color: #000;
       }
     }
     .changepage {
