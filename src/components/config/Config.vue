@@ -20,12 +20,32 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="账号安全" name="accountSecurity">
-        <div class="passwd-modify">
-          修改密码
-        </div>
-        <div class="ban-ip">
-          屏蔽设置
-        </div>
+        <el-row>
+          <el-col :span="2">
+            <div class="nav-vertical-item" :class="{'active': subActiveName === 'modifyPasswd'}" @click="setSubItem()">
+              修改密码
+            </div>
+            <div class="nav-vertical-item">
+              屏蔽设置
+            </div>
+          </el-col>
+          <el-col :span="22">
+            <div class="modify-passwd">
+              <el-form label-width="80px" :model="passwdForm" :rules="passwdRules" ref="passwdForm">
+                <el-form-item label="新密码" prop="passwd">
+                  <el-input v-model="passwdForm.passwd" type="password" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="verifyPasswd">
+                  <el-input v-model="passwdForm.verifyPasswd" type="password" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitForm('passwdForm')">确认</el-button>
+                  <el-button type="warning" @click="resetForm('passwdForm')">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </el-col>
+        </el-row>
       </el-tab-pane>
       <el-tab-pane label="博客设置" name="blogConfig">
         <div class="category-manager">
@@ -40,11 +60,40 @@ import transparentFileElm from '@/components/smallcomponents/TransparentFileElm'
 
 const OK = 'success';
 
-export default{
+export default {
   data() {
+    const checkPasswd = (rule, val, cb) => {
+      if (val === '') {
+        cb(new Error('请输入密码'));
+      } else {
+        cb();
+      }
+    };
+    const checkEqual = (rule, val, cb) => {
+      if (val === '') {
+        cb(new Error('请输入密码'));
+      } else if (val !== this.passwdForm.passwd) {
+        cb(new Error('两次输入密码不一致'));
+      } else {
+        cb();
+      }
+    };
     return {
       activeName: 'personalData',
+      subActiveName: '',
       coverImg: '',
+      passwdForm: {
+        passwd: '',
+        verifyPasswd: '',
+      },
+      passwdRules: {
+        passwd: [
+          { validator: checkPasswd, trigger: 'blur' },
+        ],
+        verifyPasswd: [
+          { validator: checkEqual, trigger: 'blur' },
+        ],
+      },
     };
   },
   created() {
@@ -60,6 +109,13 @@ export default{
   },
   methods: {
     handleClick() {
+      if (this.activeName === 'personalData') {
+        this.subActiveName = 'uploadProject';
+      } else if (this.activeName === 'accountSecurity') {
+        this.subActiveName = 'modifyPasswd';
+      } else {
+        this.subActiveName = 'categoryManager';
+      }
     },
     selectCover() {
       this.$refs.uploadCover.open();
@@ -84,6 +140,29 @@ export default{
           }
         });
     },
+    resetForm(form) {
+      this.$refs[form].resetFields();
+    },
+    submitForm(form) {
+      /* eslint-disable consistent-return */
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this
+            .$http
+            .post('/api/config/change-passwd', this.passwdForm)
+            .then((res) => {
+              res = res.body;
+              if (res.status === OK) {
+                this.$message.success('修改密码成功');
+              } else {
+                this.$message.error('服务器问题');
+              }
+            });
+        } else {
+          return false;
+        }
+      });
+    },
   },
   components: {
     transparentFileElm,
@@ -91,6 +170,8 @@ export default{
 };
 </script>
 <style lang='scss'>
+@import '../../common/scss/config';
+
 .config-module {
   position: relative;
   padding-top: 20px;
@@ -114,6 +195,13 @@ export default{
   }
   .el-tabs__item {
     color: #fff;
+  }
+  .modify-passwd {
+    width: 500px;
+    margin: 20px auto;
+    label {
+      color: #fff;
+    }
   }
 }
 </style>

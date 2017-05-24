@@ -1,0 +1,12 @@
+.nav-vertical-item {
+  text-align: center;
+  line-height: 25px;
+  height: 25px;
+  margin: 0 10px;
+  padding: 10px 0;
+  cursor: pointer;
+  &.active {
+    background: #4e8b5b;
+    border-bottom: 1px solid #fff;
+  }
+}

@@ -132,8 +132,10 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
+            debugger;
             this.form = res.data.blog;
             this.categories = res.data.categories;
+            debugger;
             this.originForm = JSON.parse(JSON.stringify(this.form));
             // 设置编辑器的内容, editormd实例需要一定的延迟
             let self = this;
@@ -149,6 +151,7 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
+            debugger;
             this.categories = res.data || [];
           }
         });
