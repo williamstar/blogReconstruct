@@ -9,7 +9,7 @@
           </div>
         </el-col>
         <el-col :md="{span:4, pull: 1}" :sm="{span:4, offset:1}" :xs="{span:0}">
-          <img src=" http://placehold.it/500x500 " class="avatar " alt="用户头像 ">
+          <img :src="coverImg" class="avatar " alt="用户头像 ">
         </el-col>
       </el-row>
     </div>
@@ -17,9 +17,26 @@
 </template>
 <script type='text/javascript'>
 export default {
+  data() {
+    return {
+      coverImg: '/api/image/default.jpg',
+    };
+  },
+  created() {
+    this
+      .$http
+      .get('/api/user-config')
+      .then((res) => {
+        res = res.body;
+        if (res.status === 'success') {
+          this.coverImg = `/api/image/${res.data.coverImg}`;
+        }
+      });
+  },
   methods: {
     toIndex() {
-      if (this.$route.fullPath.indexOf('edit') !== -1) {
+      const returnAdmin = ['edit', 'config', 'admin'];
+      if (returnAdmin.some(returnItem => this.$route.fullPath.indexOf(returnItem) !== -1)) {
         this.$router.push('/admin');
       } else {
         this.$router.push('/');
@@ -75,11 +92,13 @@ export default {
     }
     .avatar {
       margin: 0 auto;
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
       @media screen and (max-width: 768px) {
         display: none;
       }
-      max-height: 100px;
-      object-fit: cover;
     }
   }
 }
