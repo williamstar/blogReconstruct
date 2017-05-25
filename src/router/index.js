@@ -9,6 +9,7 @@ import Index from '@/components/index/Index';
 import Personal from '@/components/personal/Personal';
 import Project from '@/components/project/Project';
 import blogIterator from '@/components/smallcomponents/BlogIterator';
+import Config from '@/components/config/Config';
 
 Vue.use(Router);
 
@@ -38,10 +39,6 @@ export default new Router({
       component: Register,
     },
     {
-      path: '/edit/:blogId?',
-      component: Editor,
-    },
-    {
       path: '/blog/:blogId?',
       component: Blog,
     },
@@ -52,6 +49,14 @@ export default new Router({
     {
       path: '/admin',
       component: Admin,
+    },
+    {
+      path: '/config',
+      component: Config,
+    },
+    {
+      path: '/edit/:blogId?',
+      component: Editor,
     },
   ],
 });

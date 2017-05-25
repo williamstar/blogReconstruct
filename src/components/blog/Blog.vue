@@ -74,6 +74,9 @@ export default {
     display: flex;
     align-items: center;
     color: #fff;
+    .el-tag {
+      margin-right: 8px;
+    }
     .tags-wrapper {
       margin-left: 30px;
     }
