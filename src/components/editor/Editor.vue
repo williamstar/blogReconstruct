@@ -101,6 +101,7 @@ export default {
       originForm: {},
       timer: 0,
       form: {
+        id: '',
         title: '',
         categoryId: '',
         isDraft: 0,
@@ -125,7 +126,6 @@ export default {
       }, 30000);
     }
     if (this.$route.params.blogId) {
-      this.loadMarkdown = true;
       this
         .$http
         .get(`/api/blog/${this.$route.params.blogId}/edit`)
@@ -155,6 +155,7 @@ export default {
     }
   },
   deactivated() {
+    this.resetForm();
     clearInterval(this.timer);
   },
   created() {
@@ -398,6 +399,7 @@ export default {
       localStorage.setItem('config', JSON.stringify(config));
     },
     resetForm() {
+      this.form.id = '';
       this.form.title = '';
       this.form.categoryId = '';
       this.form.tags = [];

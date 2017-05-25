@@ -2,9 +2,9 @@
   <div class='index-module'>
     <div class="nav-wrapper">
       <nav class="navigation">
-        <router-link to="/">首页</router-link>
-        <router-link to="/personal">个人介绍</router-link>
-        <router-link to="/project">项目</router-link>
+        <router-link to="/" active-class="active" exact>首页</router-link>
+        <router-link to="/personal" active-class="active">个人介绍</router-link>
+        <router-link to="/project" active-class="active">项目</router-link>
       </nav>
     </div>
     <router-view :blogs="blogs"></router-view>
@@ -15,7 +15,7 @@ import blogIterator from '@/components/smallcomponents/BlogIterator';
 
 const OK = 'success';
 
-export default{
+export default {
   data() {
     return {
       blogs: [],
@@ -49,6 +49,9 @@ export default{
     .navigation {
       display: flex;
       justify-content: space-around;
+      .active {
+        color: #770b42;
+      }
       a {
         font-size: 18px;
         font-weight: 500;

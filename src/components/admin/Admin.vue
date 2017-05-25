@@ -40,7 +40,7 @@
       </el-form>
     </div>
     <blog-iterator :blogs="blogs" :admin="true"></blog-iterator>
-    <div class="pagination">
+    <div v-if="total !== 0" class="pagination">
       <el-pagination layout="prev, pager, next" :total="total" :current-page.sync="currentPage" @current-change="handleCurrentChange">
       </el-pagination>
     </div>
@@ -83,13 +83,13 @@ export default {
           val: '全部',
         },
       ],
+      total: 0,
       categoryIndex: -1,
       sortedIndex: 0,
       isDraft: 0,
       currentPage: 1,
       queryStr: '',
       blogs: [],
-      total: 0,
       limit: 10,
     };
   },
@@ -112,7 +112,6 @@ export default {
       .then((res) => {
         res = res.body;
         if (res.status === OK) {
-          this.total = res.data.total;
           this.categories = this.categories.concat(res.data.categories);
         }
       });
@@ -153,7 +152,8 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
-            this.blogs = res.data;
+            this.blogs = res.data.blogs;
+            this.total = res.data.total;
           }
         });
     },

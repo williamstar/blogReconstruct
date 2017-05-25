@@ -59,6 +59,9 @@ export default {
 <style lang='scss' scoped>
 .blog-module {
   width: 1200px;
+  @media screen and (max-width: 1200px) {
+    width: auto;
+  }
   margin: 0px auto;
   padding: 20px 0;
   .title {
