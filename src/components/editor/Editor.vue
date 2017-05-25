@@ -132,10 +132,8 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
-            debugger;
             this.form = res.data.blog;
             this.categories = res.data.categories;
-            debugger;
             this.originForm = JSON.parse(JSON.stringify(this.form));
             // 设置编辑器的内容, editormd实例需要一定的延迟
             let self = this;
@@ -151,7 +149,6 @@ export default {
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
-            debugger;
             this.categories = res.data || [];
           }
         });
@@ -210,10 +207,7 @@ export default {
         if (this.form.tags.length <= 4) {
           this.form.tags.push(inputValue);
         } else {
-          this.$message({
-            message: '不能超过5个标签',
-            type: 'warning',
-          });
+          this.$message.warning('不能超过5个标签');
         }
       }
       this.inputValue = '';
@@ -288,9 +282,9 @@ export default {
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
-                this.cbHandler('修改博客成功', 'success');
+                this.$message.success('修改博客成功');
               } else {
-                this.cbHandler('修改博客失败', 'warning');
+                this.$message.error(`修改博客失败${res.msg}`);
               }
             });
         }
@@ -307,20 +301,12 @@ export default {
             res = res.body;
             if (res.status === OK) {
               this.$set(this.form, 'id', res.data);
-              this.cbHandler('创建博客成功', 'success');
+              this.$message.success('创建博客成功');
             } else {
-              this.cbHandler('创建博客失败', 'danger');
+              this.$message.error(`创建博客失败${res.msg}`);
             }
           });
       }
-    },
-    cbHandler(message, type) {
-      this.cbMessage = message;
-      this.cbType = type;
-      this.$message({
-        message: this.cbMessage,
-        type: this.cbType,
-      });
     },
     // 抽取markdown中的图片信息
     extractImageGuid(str) {

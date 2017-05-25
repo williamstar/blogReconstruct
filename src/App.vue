@@ -44,7 +44,7 @@ export default {
     .content {
       min-height: 100%;
       margin-bottom: -84px;
-      background: #451321;
+      background: #9cc3a4;
       &:after {
         content: "";
         display: block;

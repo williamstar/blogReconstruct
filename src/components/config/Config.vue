@@ -48,9 +48,18 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="博客设置" name="blogConfig">
-        <div class="category-manager">
-          分类管理
-        </div>
+        <el-col :span="2">
+          <div class="nav-vertical-item">
+            分类管理
+          </div>
+        </el-col>
+        <el-col :span="21" :offset="1">
+          <div class="categories">
+            <el-tag v-for="(category, index) in categories" color="#f0f" :closable="true" :key="category.id" @close="deleteCategory(index)">
+              {{category.val}}
+            </el-tag>
+          </div>
+        </el-col>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -82,6 +91,7 @@ export default {
       activeName: 'personalData',
       subActiveName: '',
       coverImg: '',
+      categories: [],
       passwdForm: {
         passwd: '',
         verifyPasswd: '',
@@ -104,6 +114,7 @@ export default {
         res = res.body;
         if (res.status === OK) {
           this.coverImg = res.data.coverImg;
+          this.categories = res.data.categories;
         }
       });
   },
@@ -163,6 +174,20 @@ export default {
         }
       });
     },
+    deleteCategory(index) {
+      this
+        .$http
+        .delete(`/api/category/${this.categories[index].id}/delete`)
+        .then((res) => {
+          res = res.body;
+          if (res.status === OK) {
+            this.categories.splice(index, 1);
+            this.$message.success('删除分类成功');
+          } else {
+            this.$message.error('删除失败，该分类不存在');
+          }
+        });
+    },
   },
   components: {
     transparentFileElm,
@@ -201,6 +226,12 @@ export default {
     margin: 20px auto;
     label {
       color: #fff;
+    }
+  }
+  .categories {
+    padding-top: 10px;
+    .el-tag {
+      margin-right: 10px;
     }
   }
 }
