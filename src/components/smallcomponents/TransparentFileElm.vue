@@ -35,6 +35,7 @@ export default {
       let self = this;
       fr.onload = () => {
         if (self.needHash) {
+          // 计算hash值
           let spark = new SparkMD5();
           spark.append(fr.result);
           self.$emit('had:cover', fr.result, spark.end());

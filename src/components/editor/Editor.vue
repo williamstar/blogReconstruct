@@ -36,7 +36,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item label="自动保存" label-width="80px">
-                    <el-switch v-model="autoSave" @change="saveStatusHandler"></el-switch>
+                    <el-switch v-model="autoSave" @change="handleAutoSave"></el-switch>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -125,6 +125,7 @@ export default {
         }
       }, 30000);
     }
+    // 存在id说明目前的编辑器状态是修改博客状态
     if (this.$route.params.blogId) {
       this
         .$http
@@ -143,6 +144,7 @@ export default {
           }
         });
     } else {
+      // 新建博客的状态
       this
         .$http
         .get('/blog/new')
@@ -172,6 +174,7 @@ export default {
     this.autoSave = config.autoSave;
   },
   mounted() {
+    // 在挂载时候生成对象是因为这时候my-editor元素才产生
     this.editor = editormd('my-editor', {
       width: '100%',
       height: 800,
@@ -181,7 +184,6 @@ export default {
       imageUploadURL: '/upload',
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
     });
-    // 警告，这边有bug，如果不存blogId的情况
   },
   methods: {
     /* eslint-disable */
@@ -271,6 +273,7 @@ export default {
               }
             }
           } else {
+            // 增加变动的key
             if (this.originForm[key] !== this.form[key]) {
               data[key] = this.form[key];
             }
@@ -290,7 +293,7 @@ export default {
             });
         }
       } else {
-        // 需要用formdate上传数据
+        // 新建博客需要上传头像
         let fd = new FormData();
         let file = document.querySelector('.hidden-upload-cover').files[0];
         fd.append('cover', file);
@@ -387,7 +390,7 @@ export default {
       this.inputVisible = false;
       this.inputValue = '';
     },
-    saveStatusHandler() {
+    handleAutoSave() {
       if (this.autoSave) {
         this.timer = setInterval(this.submit, 30000);
       } else {
