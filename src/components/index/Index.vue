@@ -27,7 +27,7 @@ export default {
   created() {
     this
       .$http
-      .get('/api/')
+      .get('/index')
       .then((res) => {
         res = res.body;
         if (res.status === OK) {

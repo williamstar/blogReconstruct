@@ -35,7 +35,7 @@ export default {
   activated() {
     this
       .$http
-      .get(`/api/blog/${this.$route.params.blogId}`)
+      .get(`/blog/${this.$route.params.blogId}`)
       .then((res) => {
         res = res.body;
         if (res.status === OK) {

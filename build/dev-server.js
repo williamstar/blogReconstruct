@@ -49,11 +49,11 @@ compiler.plugin('compilation', function (compilation) {
 // })
 var proxyOptions = {
   target: 'htpp://localhost:6000/',
-  pathRewrite: {
-    "/api/*": "/"
-  },
 }
-app.use('/api', proxyMiddleware(proxyOptions));
+app.use(proxyMiddleware((path, url) => {
+  let matchPath = ['/image', '/admin', '/blog', '/login', '/logout', '/category', '/index', '/config', '/user', '/register', '^/edit', '/checkuser', '/upload', '/tag-suggestion', '/preload-data'];
+  return matchPath.some(mp => path.match(mp));
+}, proxyOptions));
 
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())

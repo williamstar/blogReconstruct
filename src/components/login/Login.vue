@@ -26,7 +26,7 @@ export default {
   created() {
     this
       .$http
-      .get('/api/checkuser')
+      .get('/checkuser')
       .then((res) => {
         res = res.body;
         if (res.status === OK) {
@@ -38,7 +38,7 @@ export default {
     login() {
       this
         .$http
-        .post('/api/login', this.user)
+        .post('/login', this.user)
         .then((res) => {
           res = res.body;
           if (res.status === OK) {

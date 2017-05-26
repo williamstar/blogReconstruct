@@ -2,7 +2,7 @@
   <div class='blog-iterator-module'>
     <router-link :to="`/blog/${blog.id}`" class="card-wrapper" v-for="(blog, index) in blogs" :key="blog._id">
       <el-card :body-style="{padding: '0px'}">
-        <img :src="'/api/image/' + blog.coverImg" class="cover" alt="封面图片">
+        <img :src="'/image/' + blog.coverImg" class="cover" alt="封面图片">
         <div style="padding: 14px;">
           <span>{{blog.title}}</span>
           <div style="margin-top: 6px;">
@@ -44,7 +44,7 @@ export default {
       }).then(() => {
         this
           .$http
-          .delete(`/api/blog/${id}/delete`)
+          .delete(`/blog/${id}/delete`)
           .then((res) => {
             res = res.body;
             if (res.status === OK) {

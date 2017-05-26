@@ -71,7 +71,7 @@ export default {
     submitForm() {
       this
         .$http
-        .post('/api/william/register', this.form)
+        .post('/william/register', this.form)
         .then((res) => {
           res = res.body;
           debugger;

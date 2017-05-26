@@ -47,7 +47,7 @@
                 <el-button v-if="!haveCover && !form.coverImg" class="btn-cover" @click="selectCover">
                   <i class="el-icon-plus icon-plus"></i>
                 </el-button>
-                <img v-else :src="`/api/image/${form.coverImg}`" class="upload-cover" alt="封面" @click="selectCover">
+                <img v-else :src="`/image/${form.coverImg}`" class="upload-cover" alt="封面" @click="selectCover">
                 <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
               </div>
             </el-col>
@@ -128,7 +128,7 @@ export default {
     if (this.$route.params.blogId) {
       this
         .$http
-        .get(`/api/blog/${this.$route.params.blogId}/edit`)
+        .get(`/blog/${this.$route.params.blogId}/edit`)
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
@@ -145,7 +145,7 @@ export default {
     } else {
       this
         .$http
-        .get('/api/blog/new')
+        .get('/blog/new')
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
@@ -178,7 +178,7 @@ export default {
       saveHTMLToTextarea: true,
       path: '/static/lib/',
       imageUpload: true,
-      imageUploadURL: '/api/upload',
+      imageUploadURL: '/upload',
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
     });
     // 警告，这边有bug，如果不存blogId的情况
@@ -190,7 +190,7 @@ export default {
       if (qs === '') return;
       this
         .$http
-        .post('/api/tag-suggestion', { 'qs': qs })
+        .post('/tag-suggestion', { 'qs': qs })
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
@@ -223,7 +223,7 @@ export default {
         // 创建新的category
         this
           .$http
-          .post('/api/category/new', { category: nval })
+          .post('/category/new', { category: nval })
           .then((res) => {
             res = res.body;
             if (res.status === OK) {
@@ -279,7 +279,7 @@ export default {
         if (Object.keys(data).length > 0) {
           this
             .$http
-            .put(`/api/blog/${this.form.id}/edit`, data)
+            .put(`/blog/${this.form.id}/edit`, data)
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
@@ -297,7 +297,7 @@ export default {
         fd.append('blog', JSON.stringify(this.form));
         this
           .$http
-          .post('/api/blog/new', fd)
+          .post('/blog/new', fd)
           .then((res) => {
             res = res.body;
             if (res.status === OK) {
@@ -338,7 +338,7 @@ export default {
           fd.append('editormd-image-file', file);
           this
             .$http
-            .post(`/api/upload?guid=${hash}`, fd)
+            .post(`/upload?guid=${hash}`, fd)
             .then((res) => {
               res = res.body;
               if (res.status === OK) {

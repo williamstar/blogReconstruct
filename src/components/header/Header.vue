@@ -19,17 +19,17 @@
 export default {
   data() {
     return {
-      coverImg: '/api/image/default.jpg',
+      coverImg: '/upload/default.jpg',
     };
   },
   created() {
     this
       .$http
-      .get('/api/user-config')
+      .get('/config/user-config')
       .then((res) => {
         res = res.body;
         if (res.status === 'success') {
-          this.coverImg = `/api/image/${res.data.coverImg}`;
+          this.coverImg = `/image/${res.data.coverImg}`;
         }
       });
   },

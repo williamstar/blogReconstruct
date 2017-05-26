@@ -4,7 +4,7 @@
       <el-button v-if="!coverImg" class="cover-btn" @click="selectCover">
         <i class="el-icon-plus icon-plus"></i>
       </el-button>
-      <img :src="`/api/image/${coverImg}`" @click="selectCover" width="150" height="150" alt="用户头像" class="upload-cover">
+      <img :src="`/image/${coverImg}`" @click="selectCover" width="150" height="150" alt="用户头像" class="upload-cover">
       <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -109,7 +109,7 @@ export default {
   created() {
     this
       .$http
-      .get('/api/user-config')
+      .get('/config/user-config')
       .then((res) => {
         res = res.body;
         if (res.status === OK) {
@@ -140,7 +140,7 @@ export default {
       fd.append('coverImg', hash);
       this
         .$http
-        .post('/api/config/upload-cover', fd)
+        .post('/config/upload-cover', fd)
         .then((res) => {
           res = res.body;
           if (res.status === OK) {
@@ -160,7 +160,7 @@ export default {
         if (valid) {
           this
             .$http
-            .post('/api/config/change-passwd', this.passwdForm)
+            .post('/config/change-passwd', this.passwdForm)
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
@@ -177,7 +177,7 @@ export default {
     deleteCategory(index) {
       this
         .$http
-        .delete(`/api/category/${this.categories[index].id}/delete`)
+        .delete(`/category/${this.categories[index].id}/delete`)
         .then((res) => {
           res = res.body;
           if (res.status === OK) {

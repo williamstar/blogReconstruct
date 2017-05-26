@@ -8,7 +8,7 @@ import Blog from '@/components/blog/Blog';
 import Index from '@/components/index/Index';
 import Personal from '@/components/personal/Personal';
 import Project from '@/components/project/Project';
-import blogIterator from '@/components/smallcomponents/BlogIterator';
+import Display from '@/components/index/Display';
 import Config from '@/components/config/Config';
 
 Vue.use(Router);
@@ -22,7 +22,7 @@ export default new Router({
       children: [
         {
           path: '',
-          component: blogIterator,
+          component: Display,
         },
         {
           path: 'personal',
