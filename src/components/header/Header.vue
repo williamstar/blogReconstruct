@@ -49,6 +49,7 @@ export default {
 .header-module {
   width: 100%;
   background: #D8E2DD;
+
   .content {
     width: 1020px;
     margin: 0 auto;
@@ -67,6 +68,7 @@ export default {
       text-transform: uppercase;
       font-size: 24px;
       flex-direction: column;
+      cursor: pointer;
       @media screen and (max-width: 768px) {
         font-size: 36px;
         .last-name {

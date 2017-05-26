@@ -31,6 +31,9 @@ export default{
       blogs: [],
     };
   },
+  activated() {
+    this.getBlog();
+  },
   computed: {
     pageSize() {
       return Math.ceil(this.total / this.limit);

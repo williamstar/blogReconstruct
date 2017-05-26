@@ -74,7 +74,6 @@ export default {
         .post('/william/register', this.form)
         .then((res) => {
           res = res.body;
-          debugger;
           if (res.status === OK) {
             // 跳转到管理处
             this.$router.push('/admin');

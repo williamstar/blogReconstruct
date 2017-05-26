@@ -61,7 +61,6 @@ export default {
             }
           });
       }).catch(() => {
-        debugger;
         this.$message({
           type: 'info',
           message: '已取消删除',

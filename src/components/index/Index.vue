@@ -13,8 +13,6 @@
 <script type='text/javascript'>
 import blogIterator from '@/components/smallcomponents/BlogIterator';
 
-const OK = 'success';
-
 export default {
   data() {
     return {
@@ -23,17 +21,6 @@ export default {
   },
   activated() {
     document.title = 'william';
-  },
-  created() {
-    this
-      .$http
-      .get('/index')
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.blogs = res.data;
-        }
-      });
   },
   components: {
     blogIterator,
