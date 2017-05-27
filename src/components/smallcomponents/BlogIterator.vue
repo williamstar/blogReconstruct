@@ -19,6 +19,7 @@
 </template>
 <script type='text/javascript'>
 import { currentTime as formateTime } from '@/common/js/time';
+import { Message, MessageBox } from 'element-ui';
 
 const OK = 'success';
 
@@ -37,7 +38,7 @@ export default {
       this.$router.push(`/edit/${id}`);
     },
     del(id, index) {
-      this.$confirm('是否删除当前博客?', '提示', {
+      MessageBox.confirm('是否删除当前博客?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -49,22 +50,13 @@ export default {
             res = res.body;
             if (res.status === OK) {
               this.blogs.splice(index, 1);
-              this.$message({
-                type: 'success',
-                message: '删除成功',
-              });
+              Message.success('删除成功');
             } else {
-              this.$message({
-                type: 'warning',
-                message: '删除失败',
-              });
+              Message.warning('删除失败');
             }
           });
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除',
-        });
+        Message.info('已取消删除');
       });
     },
   },

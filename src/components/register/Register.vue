@@ -18,6 +18,8 @@
   </div>
 </template>
 <script type='text/javascript'>
+import { Message } from 'element-ui';
+
 const OK = 'success';
 
 export default {
@@ -78,7 +80,7 @@ export default {
             // 跳转到管理处
             this.$router.push('/admin');
           } else {
-            this.$message.error('系统错误');
+            Message.error('系统错误');
           }
         });
     },

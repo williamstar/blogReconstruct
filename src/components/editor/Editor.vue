@@ -84,6 +84,7 @@ import editormd from 'editormd';
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
 /* eslint-disable no-unused-vars*/
 import _ from 'lodash';
+import { Message } from 'element-ui';
 
 const OK = 'success';
 
@@ -136,11 +137,11 @@ export default {
             this.form = res.data.blog;
             this.categories = res.data.categories;
             this.originForm = JSON.parse(JSON.stringify(this.form));
-            // 设置编辑器的内容, editormd实例需要一定的延迟
+            // 设置编辑器的内容, editormd实例化需要一定的延迟
             let self = this;
             setTimeout(() => {
               self.editor.setMarkdown(self.form.text);
-            }, 1000);
+            }, 1500);
           }
         });
     } else {
@@ -210,7 +211,7 @@ export default {
         if (this.form.tags.length <= 4) {
           this.form.tags.push(inputValue);
         } else {
-          this.$message.warning('不能超过5个标签');
+          Message.warning('不能超过5个标签');
         }
       }
       this.inputValue = '';
@@ -235,7 +236,7 @@ export default {
                 val: nval,
               });
             } else {
-              this.$message.error('创建失败');
+              Message.error('创建失败');
             }
           });
       }
@@ -286,9 +287,9 @@ export default {
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
-                this.$message.success('修改博客成功');
+                Message.success('修改博客成功');
               } else {
-                this.$message.error(`修改博客失败${res.msg}`);
+                Message.error(`修改博客失败${res.msg}`);
               }
             });
         }
@@ -305,9 +306,9 @@ export default {
             res = res.body;
             if (res.status === OK) {
               this.$set(this.form, 'id', res.data);
-              this.$message.success('创建博客成功');
+              Message.success('创建博客成功');
             } else {
-              this.$message.error(`创建博客失败${res.msg}`);
+              Message.error(`创建博客失败${res.msg}`);
             }
           });
       }
@@ -347,7 +348,7 @@ export default {
               if (res.status === OK) {
                 this.submit();
               } else {
-                this.$message.error('上传失败');
+                Message.error('上传失败');
               }
             });
         }
@@ -381,10 +382,7 @@ export default {
         if (this.form.tags.length <= 4) {
           this.form.tags.push(inputValue);
         } else {
-          this.$message({
-            message: '不能超过5个标签',
-            type: 'warning',
-          });
+          Message.warning('不能超过5个标签');
         }
       }
       this.inputVisible = false;

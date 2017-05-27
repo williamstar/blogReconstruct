@@ -2,7 +2,27 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import VueResource from 'vue-resource';
-import ElementUI from 'element-ui';
+import {
+  Pagination,
+  Autocomplete,
+  Input,
+  Switch,
+  Select,
+  Option,
+  Button,
+  Form,
+  FormItem,
+  Tabs,
+  TabPane,
+  Tag,
+  Icon,
+  Row,
+  Col,
+  Card,
+  Message,
+  MessageBox,
+  Dialog,
+} from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
@@ -10,7 +30,25 @@ import router from './router';
 
 Vue.use(VueResource);
 Vue.config.productionTip = false;
-Vue.use(ElementUI);
+Vue.use(Pagination);
+Vue.use(Autocomplete);
+Vue.use(Input);
+Vue.use(Switch);
+Vue.use(Select);
+Vue.use(Option);
+Vue.use(Button);
+Vue.use(Dialog);
+Vue.use(FormItem);
+Vue.use(TabPane);
+Vue.use(Tabs);
+Vue.use(Tag);
+Vue.use(Icon);
+Vue.use(Row);
+Vue.use(Col);
+Vue.use(Message);
+Vue.use(MessageBox);
+Vue.use(Card);
+Vue.use(Form);
 
 
 /* eslint-disable no-new */

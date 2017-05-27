@@ -65,6 +65,7 @@
   </div>
 </template>
 <script type='text/javascript'>
+import { Message } from 'element-ui';
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
 
 const OK = 'success';
@@ -145,9 +146,9 @@ export default {
           res = res.body;
           if (res.status === OK) {
             // done something
-            this.$message.success('上传用户头像成功');
+            Message.success('上传用户头像成功');
           } else {
-            this.$message.warning('服务器问题');
+            Message.warning('服务器问题');
           }
         });
     },
@@ -164,9 +165,9 @@ export default {
             .then((res) => {
               res = res.body;
               if (res.status === OK) {
-                this.$message.success('修改密码成功');
+                Message.success('修改密码成功');
               } else {
-                this.$message.error('服务器问题');
+                Message.error('服务器问题');
               }
             });
         } else {
@@ -182,9 +183,9 @@ export default {
           res = res.body;
           if (res.status === OK) {
             this.categories.splice(index, 1);
-            this.$message.success('删除分类成功');
+            Message.success('删除分类成功');
           } else {
-            this.$message.error('删除失败，该分类不存在');
+            Message.error('删除失败，该分类不存在');
           }
         });
     },
