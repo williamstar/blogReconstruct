@@ -1,8 +1,7 @@
 <template>
   <div class='editor-module'>
     <el-row>
-      <el-col :span="4">left-part</el-col>
-      <el-col :span="16">
+      <el-col :span="16" :offset="4">
         <el-form label-width="40px">
           <el-row>
             <el-col :span="20">
@@ -72,7 +71,6 @@
           </div>
         </el-form>
       </el-col>
-      <el-col :span="4">right-part</el-col>
     </el-row>
   </div>
 </template>
@@ -83,7 +81,7 @@ import editormd from 'editormd';
 /* eslint-enable */
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
 /* eslint-disable no-unused-vars*/
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import { Message } from 'element-ui';
 
 const OK = 'success';
@@ -189,7 +187,7 @@ export default {
   methods: {
     /* eslint-disable */
     // 提供tag的建议
-    tagSuggestion: _.debounce(function (qs, cb) {
+    tagSuggestion: debounce(function (qs, cb) {
       if (qs === '') return;
       this
         .$http

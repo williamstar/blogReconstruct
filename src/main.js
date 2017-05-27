@@ -19,8 +19,6 @@ import {
   Row,
   Col,
   Card,
-  Message,
-  MessageBox,
   Dialog,
 } from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
@@ -28,8 +26,8 @@ import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
 import router from './router';
 
-Vue.use(VueResource);
 Vue.config.productionTip = false;
+Vue.use(VueResource);
 Vue.use(Pagination);
 Vue.use(Autocomplete);
 Vue.use(Input);
@@ -45,8 +43,6 @@ Vue.use(Tag);
 Vue.use(Icon);
 Vue.use(Row);
 Vue.use(Col);
-Vue.use(Message);
-Vue.use(MessageBox);
 Vue.use(Card);
 Vue.use(Form);
 

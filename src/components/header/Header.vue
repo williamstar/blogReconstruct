@@ -17,21 +17,8 @@
 </template>
 <script type='text/javascript'>
 export default {
-  data() {
-    return {
-      coverImg: '/upload/default.jpg',
-    };
-  },
-  created() {
-    this
-      .$http
-      .get('/config/user-config')
-      .then((res) => {
-        res = res.body;
-        if (res.status === 'success') {
-          this.coverImg = `/image/${res.data.coverImg}`;
-        }
-      });
+  props: {
+    coverImg: String,
   },
   methods: {
     toIndex() {

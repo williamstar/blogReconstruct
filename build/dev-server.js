@@ -48,7 +48,7 @@ compiler.plugin('compilation', function (compilation) {
 //   app.use(proxyMiddleware(options.filter || context, options))
 // })
 var proxyOptions = {
-  target: 'htpp://localhost:6000/',
+  target: 'htpp://localhost:8000/',
 }
 app.use(proxyMiddleware((path, url) => {
   let matchPath = ['/image', '/admin', '/blog', '/login', '/logout', '/category', '/index', '/config', '/user', '/register', '^/edit', '/checkuser', '/upload', '/tag-suggestion', '/preload-data'];

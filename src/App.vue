@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <my-header></my-header>
+    <my-header :cover-img="coverImg"></my-header>
     <div class="main">
       <div class="content">
         <keep-alive>
@@ -23,6 +23,22 @@ export default {
   components: {
     myHeader,
     myFooter,
+  },
+  data() {
+    return {
+      coverImg: '/upload/default.jpg',
+    };
+  },
+  created() {
+    this
+      .$http
+      .get('/config/user-config')
+      .then((res) => {
+        res = res.body;
+        if (res.status === 'success') {
+          this.coverImg = `/image/${res.data.coverImg}`;
+        }
+      });
   },
 };
 </script>
