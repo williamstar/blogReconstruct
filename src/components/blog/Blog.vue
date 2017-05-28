@@ -19,9 +19,9 @@
 /* eslint-disable */
 import $ from 'jquery';
 import editormd from 'editormd';
-import marked from 'marked';
 /* eslint-enable */
 import { currentTime } from '@/common/js/time';
+
 
 const OK = 'success';
 export default {
@@ -57,6 +57,8 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+@import '../../../static/css/editormd.css';
+
 .blog-module {
   width: 1200px;
   @media screen and (max-width: 1200px) {
@@ -76,6 +78,7 @@ export default {
     color: #fff;
     .el-tag {
       margin-right: 8px;
+      color: #fff;
     }
     .tags-wrapper {
       margin-left: 30px;

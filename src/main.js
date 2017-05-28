@@ -21,7 +21,6 @@ import {
   Card,
   Dialog,
 } from 'element-ui';
-import 'element-ui/lib/theme-default/index.css';
 import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
 import router from './router';

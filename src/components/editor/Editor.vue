@@ -417,6 +417,7 @@ export default {
 };
 </script>
 <style lang='scss'>
+@import '../../../static/css/editormd.css';
 .editor-module {
   padding-top: 30px;
   .el-form-item__label {
