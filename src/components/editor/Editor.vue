@@ -137,9 +137,12 @@ export default {
             this.originForm = JSON.parse(JSON.stringify(this.form));
             // 设置编辑器的内容, editormd实例化需要一定的延迟
             let self = this;
-            setTimeout(() => {
-              self.editor.setMarkdown(self.form.text);
-            }, 1500);
+            let setMarkdownTimer = setInterval(() => {
+              if (self.editor.setMarkdown) {
+                self.editor.setMarkdown(self.form.text);
+                clearInterval(setMarkdownTimer);
+              }
+            }, 500);
           }
         });
     } else {
