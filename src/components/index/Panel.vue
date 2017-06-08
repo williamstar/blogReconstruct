@@ -58,6 +58,7 @@ export default {
   },
   activated() {
     document.title = '后台管理';
+    console.log('activated');
     this.getBlogs();
   },
   computed: {
@@ -85,7 +86,9 @@ export default {
         this.filter = filter;
       }
       let defaultUrl = '/blogs';
+      // 拼接查询得字符串
       defaultUrl = `/blogs?page=${this.currentPage}&isDraft=${this.filter.isDraft}&categoryId=${this.filter.categoryId}&sortedKey=${this.filter.sortedKey}&sortedVal=${this.filter.sortedVal}&queryStr=${this.filter.queryStr}`;
+      // 加载得过度动画
       let loading = Loading.service({ target: document.querySelector('.content-hook') });
       getBlogsService(defaultUrl)
         .then(({ blogs, total }) => {

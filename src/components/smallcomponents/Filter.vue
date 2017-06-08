@@ -70,9 +70,6 @@ export default {
       'filterCategories',
     ]),
   },
-  created() {
-    this.getBlog();
-  },
   methods: {
     handleSearch() {
 
