@@ -21,9 +21,8 @@ import $ from 'jquery';
 import editormd from 'editormd';
 /* eslint-enable */
 import { currentTime } from '@/common/js/time';
+import { getBlogService } from '@/api/index';
 
-
-const OK = 'success';
 export default {
   data() {
     return {
@@ -33,22 +32,19 @@ export default {
     };
   },
   activated() {
-    this
-      .$http
-      .get(`/blog/${this.$route.params.blogId}`)
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.blog = res.data;
-          document.title = this.blog.title;
-          // 清除掉原先的html
-          document.querySelector('#blog-text').innerHTML = '';
-          this.editor = editormd.markdownToHTML('blog-text', {
-            markdown: this.blog.text,
-            htmlDecode: true,
-            markdownSourceCode: false,
-          });
-        }
+    getBlogService(`/blog/${this.$route.params.blogId}`)
+      .then((blog) => {
+        this.blog = blog;
+        document.title = this.blog.title;
+        // 清除掉原先的html
+        document.querySelector('#blog-text').innerHTML = '';
+        this.editor = editormd.markdownToHTML('blog-text', {
+          markdown: this.blog.text,
+          htmlDecode: true,
+          markdownSourceCode: false,
+        });
+      }).catch((err) => {
+        console.log(err);
       });
   },
   filters: {

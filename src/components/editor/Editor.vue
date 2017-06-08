@@ -83,13 +83,21 @@ import transparentFileElm from '@/components/smallcomponents/TransparentFileElm'
 /* eslint-disable no-unused-vars*/
 import { debounce } from 'lodash';
 import { Message } from 'element-ui';
+import { mapState, mapActions } from 'vuex';
+import {
+  getEditBlogService,
+  addCategoryService,
+  postBlogService,
+  editBlogService,
+  tagSuggestService,
+  uploadBlogCover,
+} from '@/api/index';
 
 const OK = 'success';
 
 export default {
   data() {
     return {
-      categories: '',
       inputVisible: false,
       inputValue: '',
       autoSave: true,
@@ -126,35 +134,18 @@ export default {
     }
     // 存在id说明目前的编辑器状态是修改博客状态
     if (this.$route.params.blogId) {
-      this
-        .$http
-        .get(`/blog/${this.$route.params.blogId}/edit`)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.form = res.data.blog;
-            this.categories = res.data.categories;
-            this.originForm = JSON.parse(JSON.stringify(this.form));
-            // 设置编辑器的内容, editormd实例化需要一定的延迟
-            let self = this;
-            let setMarkdownTimer = setInterval(() => {
-              if (self.editor.setMarkdown) {
-                self.editor.setMarkdown(self.form.text);
-                clearInterval(setMarkdownTimer);
-              }
-            }, 500);
-          }
-        });
-    } else {
-      // 新建博客的状态
-      this
-        .$http
-        .get('/blog/new')
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.categories = res.data || [];
-          }
+      getEditBlogService(`/blog/${this.$route.params.blogId}/edit`)
+        .then(blog => {
+          this.form = blog;
+          this.originForm = JSON.parse(JSON.stringify(this.form));
+          // 设置编辑器的内容, editormd实例化需要一定的延迟
+          let self = this;
+          let setMarkdownTimer = setInterval(() => {
+            if (self.editor.setMarkdown) {
+              self.editor.setMarkdown(self.form.text);
+              clearInterval(setMarkdownTimer);
+            }
+          }, 500);
         });
     }
   },
@@ -187,23 +178,26 @@ export default {
       imageFormats: ['jpg', 'jpeg', 'gif', 'png', 'bmp', 'webp'],
     });
   },
+  computed: {
+    ...mapState([
+      'categories',
+    ]),
+  },
   methods: {
     /* eslint-disable */
     // 提供tag的建议
     tagSuggestion: debounce(function (qs, cb) {
       if (qs === '') return;
-      this
-        .$http
-        .post('/tag-suggestion', { 'qs': qs })
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            const data = res.data.map(tag => ({ value: tag })) || [];
-            cb(data);
-          }
+      tagSuggestService({ 'qs': qs })
+        .then(tags => {
+          const data = tags.map(tag => ({ value: tag })) || [];
+          cb(data);
         });
     }, 1000),
     /* eslint-enable */
+    ...mapActions([
+      'addCategory',
+    ]),
     // 选择tag
     selectTag(item) {
       let inputValue = this.inputValue;
@@ -220,25 +214,22 @@ export default {
     // 添加新的分类
     addNewCategory(nval) {
       // 创建的时候用的val,但是真正变动的时候却是id
-      if (nval === '') {
+      if (nval === '' || typeof nval === 'object' || typeof nval === 'number') {
         return;
       }
-      if (!this.categories.some(category => category.val === nval || category.id === nval)) {
+      debugger;
+      if (!this.categories.some(category => category.val === nval)) {
         // 创建新的category
-        this
-          .$http
-          .post('/category/new', { category: nval })
-          .then((res) => {
-            res = res.body;
-            if (res.status === OK) {
-              this.form.categoryId = res.data;
-              this.categories.push({
-                id: res.data,
-                val: nval,
-              });
-            } else {
-              Message.error('创建失败');
-            }
+        addCategoryService({ category: nval })
+          .then((id) => {
+            this.form.categoryId = id;
+            this.addCategory({
+              id,
+              val: nval,
+            });
+          }).catch((err) => {
+            console.log(err);
+            Message.error('创建失败');
           });
       }
     },
@@ -282,16 +273,11 @@ export default {
           }
         }, this);
         if (Object.keys(data).length > 0) {
-          this
-            .$http
-            .put(`/blog/${this.form.id}/edit`, data)
-            .then((res) => {
-              res = res.body;
-              if (res.status === OK) {
-                Message.success('修改博客成功');
-              } else {
-                Message.error(`修改博客失败${res.msg}`);
-              }
+          editBlogService(`/blog/${this.form.id}/edit`, data)
+            .then(() => {
+              Message.success('修改博客成功');
+            }).catch((err) => {
+              Message.error(`修改博客失败${err}`);
             });
         }
       } else {
@@ -300,17 +286,12 @@ export default {
         let file = document.querySelector('.hidden-upload-cover').files[0];
         fd.append('cover', file);
         fd.append('blog', JSON.stringify(this.form));
-        this
-          .$http
-          .post('/blog/new', fd)
-          .then((res) => {
-            res = res.body;
-            if (res.status === OK) {
-              this.$set(this.form, 'id', res.data);
-              Message.success('创建博客成功');
-            } else {
-              Message.error(`创建博客失败${res.msg}`);
-            }
+        postBlogService(fd)
+          .then(id => {
+            this.$set(this.form, 'id', id);
+            Message.success('创建博客成功');
+          }).catch(err => {
+            Message.error(`创建博客失败${err}`);
           });
       }
     },
@@ -341,16 +322,11 @@ export default {
           let file = document.querySelector('.hidden-upload-cover').files[0];
           let fd = new FormData();
           fd.append('editormd-image-file', file);
-          this
-            .$http
-            .post(`/upload?guid=${hash}`, fd)
-            .then((res) => {
-              res = res.body;
-              if (res.status === OK) {
-                this.submit();
-              } else {
-                Message.error('上传失败');
-              }
+          uploadBlogCover(hash, fd)
+            .then(() => {
+              this.submit();
+            }).catch(() => {
+              Message.error('上传失败');
             });
         }
       });

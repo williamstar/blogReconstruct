@@ -16,9 +16,13 @@
   </div>
 </template>
 <script type='text/javascript'>
+import { mapState } from 'vuex';
+
 export default {
-  props: {
-    coverImg: String,
+  computed: {
+    ...mapState([
+      'coverImg',
+    ]),
   },
   methods: {
     toIndex() {

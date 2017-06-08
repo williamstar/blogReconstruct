@@ -20,8 +20,7 @@
 <script type='text/javascript'>
 import { currentTime as formateTime } from '@/common/js/time';
 import { Message, MessageBox } from 'element-ui';
-
-const OK = 'success';
+import { deleteBlogService } from '@/api/index';
 
 export default {
   props: {
@@ -43,17 +42,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        this
-          .$http
-          .delete(`/blog/${id}/delete`)
-          .then((res) => {
-            res = res.body;
-            if (res.status === OK) {
-              this.blogs.splice(index, 1);
-              Message.success('删除成功');
-            } else {
-              Message.warning('删除失败');
-            }
+        deleteBlogService(`/blog/${id}/delete`)
+          .then(() => {
+            this.blogs.splice(index, 1);
+            Message.success('删除成功');
+          }).catch(err => {
+            Message.warning(`删除失败${err}`);
           });
       }).catch(() => {
         Message.info('已取消删除');

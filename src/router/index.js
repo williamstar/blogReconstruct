@@ -3,12 +3,11 @@ import Router from 'vue-router';
 import Editor from '@/components/editor/Editor';
 import Login from '@/components/login/Login';
 import Register from '@/components/register/Register';
-import Admin from '@/components/admin/Admin';
+import Panel from '@/components/index/Panel';
 import Blog from '@/components/blog/Blog';
 import Index from '@/components/index/Index';
 import Personal from '@/components/personal/Personal';
 import Project from '@/components/project/Project';
-import Display from '@/components/index/Display';
 import Config from '@/components/config/Config';
 
 Vue.use(Router);
@@ -22,7 +21,7 @@ export default new Router({
       children: [
         {
           path: '',
-          component: Display,
+          component: Panel,
         },
         {
           path: 'personal',
@@ -48,7 +47,7 @@ export default new Router({
     },
     {
       path: '/admin',
-      component: Admin,
+      component: Panel,
     },
     {
       path: '/config',

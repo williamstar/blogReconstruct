@@ -1,14 +1,14 @@
 <template>
   <div class='filter-module'>
     <el-form :inline="true" label-width="50px" class="filter">
-      <el-form-item v-if="$route.fullPath.indexOf('admin') !== -1" label="博客状态">
+      <el-form-item v-if="isAdmin" label="博客状态">
         <el-select v-model="isDraft" @change="getBlog">
           <el-option v-for="(status, index) in blogStatuss" :value="index" :label="status" :key="index"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="分类">
         <el-select v-model="categoryIndex" @change="getBlog">
-          <el-option v-for="category in categories" :value="category.id" :label="category.val" :key="category.id"></el-option>
+          <el-option v-for="category in filterCategories" :value="category.id" :label="category.val" :key="category.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="排序">
@@ -23,9 +23,17 @@
   </div>
 </template>
 <script type='text/javascript'>
-const OK = 'success';
+import { mapGetters } from 'vuex';
 
-export default{
+export default {
+  props: {
+    isAdmin: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+  },
   data() {
     return {
       blogStatuss: ['完成', '草稿'],
@@ -51,28 +59,18 @@ export default{
           text: '最多评论量',
         },
       ],
-      categories: [
-        {
-          id: -1,
-          val: '全部',
-        },
-      ],
       categoryIndex: -1,
       sortedIndex: 0,
       queryStr: '',
       isDraft: 0,
     };
   },
+  computed: {
+    ...mapGetters([
+      'filterCategories',
+    ]),
+  },
   created() {
-    this
-      .$http
-      .get('/preload-data')
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.categories = this.categories.concat(res.data.categories);
-        }
-      });
     this.getBlog();
   },
   methods: {

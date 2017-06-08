@@ -24,6 +24,7 @@ import {
 import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
 import router from './router';
+import store from './vuex/index';
 
 Vue.config.productionTip = false;
 Vue.use(VueResource);
@@ -50,6 +51,7 @@ Vue.use(Form);
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App },
 });

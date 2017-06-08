@@ -12,7 +12,8 @@
   </div>
 </template>
 <script type='text/javascript'>
-const OK = 'success';
+import { loginService, checkUserService } from '@/api/index';
+import { Message } from 'element-ui';
 
 export default {
   data() {
@@ -24,26 +25,18 @@ export default {
     };
   },
   created() {
-    this
-      .$http
-      .get('/checkuser')
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.$router.push('/admin');
-        }
+    checkUserService('/checkuser')
+      .then(() => {
+        this.$router.push('/admin');
       });
   },
   methods: {
     login() {
-      this
-        .$http
-        .post('/login', this.user)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.$router.push('/admin');
-          }
+      loginService(this.user)
+        .then(() => {
+          this.$router.push('/admin');
+        }).catch(() => {
+          Message.warning('密码错误');
         });
     },
   },

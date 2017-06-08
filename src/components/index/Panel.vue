@@ -1,6 +1,6 @@
 <template>
   <div class='admin-module'>
-    <div class="platform">
+    <div v-if="isAdmin" class="platform">
       <div class="nav-bar">
         <router-link to="/edit">
           <el-button icon="plus" type="primary">添加新博客</el-button>
@@ -19,19 +19,21 @@
         </router-link>
       </div>
     </div>
-    <filter-blog @get-blog="getBlog"></filter-blog>
-    <blog-iterator :blogs="blogs" :admin="true"></blog-iterator>
-    <div v-if="total !== 0" class="pagination">
-      <el-pagination layout="prev, pager, next" :total="total" :current-page.sync="currentPage" @current-change="handleCurrentChange">
-      </el-pagination>
+    <div class="content-hook">
+      <filter-blog @get-blog="getBlogs" :is-admin="isAdmin"></filter-blog>
+      <blog-iterator :blogs="blogs" :admin="isAdmin"></blog-iterator>
+      <div v-if="total !== 0" class="pagination">
+        <el-pagination layout="prev, pager, next" :total="total" :current-page.sync="currentPage" @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
 <script type='text/javascript'>
 import blogIterator from '@/components/smallcomponents/BlogIterator';
 import filterBlog from '@/components/smallcomponents/Filter';
-
-const OK = 'success';
+import { checkUserService, getBlogsService, logoutService } from '@/api/index';
+import { Loading } from 'element-ui';
 
 export default {
   data() {
@@ -50,59 +52,50 @@ export default {
     };
   },
   beforeMount() {
-    this
-      .$http
-      .get('/checkuser')
-      .then((res) => {
-        res = res.body;
-        if (res.status !== OK) {
-          // 如果已经登陆就继续，否则跳转到登陆页面
-          this.$router.push('/login');
-        }
-      });
+    checkUserService().catch(() => {
+      this.$router.push('/login');
+    });
   },
   activated() {
     document.title = '后台管理';
-    this.getBlog();
+    this.getBlogs();
   },
   computed: {
     pageSize() {
       return Math.ceil(this.total / this.limit);
     },
+    isAdmin() {
+      return this.$route.fullPath.indexOf('admin') !== -1;
+    },
   },
   methods: {
     logout() {
-      this
-        .$http
-        .get('/logout')
-        .then((res) => {
-          res = res.body;
-          if (res.status === 'success') {
-            this.$router.push('/login');
-          }
-        });
+      logoutService().then(() => {
+        this.$router.push('/login');
+      });
     },
     handleCurrentChange() {
-      this.getBlog();
+      this.getBlogs();
     },
     handlerSearch() {
 
     },
-    getBlog(filter) {
+    getBlogs(filter) {
       if (filter) {
         this.filter = filter;
       }
       let defaultUrl = '/blogs';
       defaultUrl = `/blogs?page=${this.currentPage}&isDraft=${this.filter.isDraft}&categoryId=${this.filter.categoryId}&sortedKey=${this.filter.sortedKey}&sortedVal=${this.filter.sortedVal}&queryStr=${this.filter.queryStr}`;
-      this
-        .$http
-        .get(defaultUrl)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.blogs = res.data.blogs;
-            this.total = res.data.total;
-          }
+      let loading = Loading.service({ target: document.querySelector('.content-hook') });
+      getBlogsService(defaultUrl)
+        .then(({ blogs, total }) => {
+          this.blogs = blogs;
+          this.total = total;
+        })
+        .catch((err) => {
+          console.log(err);
+        }).then(() => {
+          loading.close();
         });
     },
   },
@@ -127,10 +120,14 @@ export default {
       margin-top: 20px;
     }
   }
-  .pagination {
-    margin-top: 25px;
-    display: flex;
-    justify-content: center;
+
+  .content-hook {
+    min-height: 600px;
+    .pagination {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+    }
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <my-header :cover-img="coverImg"></my-header>
+    <my-header></my-header>
     <div class="main">
       <div class="content">
         <keep-alive>
@@ -17,6 +17,7 @@
 <script>
 import myHeader from '@/components/header/Header';
 import myFooter from '@/components/footer/Footer';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'app',
@@ -24,21 +25,13 @@ export default {
     myHeader,
     myFooter,
   },
-  data() {
-    return {
-      coverImg: '/upload/default.jpg',
-    };
-  },
   created() {
-    this
-      .$http
-      .get('/config/user-config')
-      .then((res) => {
-        res = res.body;
-        if (res.status === 'success') {
-          this.coverImg = `/image/${res.data.coverImg}`;
-        }
-      });
+    this.preloadData();
+  },
+  methods: {
+    ...mapActions([
+      'preloadData',
+    ]),
   },
 };
 </script>

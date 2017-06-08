@@ -4,7 +4,7 @@
       <el-button v-if="!coverImg" class="cover-btn" @click="selectCover">
         <i class="el-icon-plus icon-plus"></i>
       </el-button>
-      <img :src="`/image/${coverImg}`" @click="selectCover" width="150" height="150" alt="用户头像" class="upload-cover">
+      <img :src="coverImg" @click="selectCover" width="150" height="150" alt="用户头像" class="upload-cover">
       <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -67,8 +67,8 @@
 <script type='text/javascript'>
 import { Message } from 'element-ui';
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
-
-const OK = 'success';
+import { mapState } from 'vuex';
+import { uploadCoverImgService, deleteCategoryService, modifyPasswdService } from '@/api/index';
 
 export default {
   data() {
@@ -91,8 +91,6 @@ export default {
     return {
       activeName: 'personalData',
       subActiveName: '',
-      coverImg: '',
-      categories: [],
       passwdForm: {
         passwd: '',
         verifyPasswd: '',
@@ -107,17 +105,11 @@ export default {
       },
     };
   },
-  created() {
-    this
-      .$http
-      .get('/config/user-config')
-      .then((res) => {
-        res = res.body;
-        if (res.status === OK) {
-          this.coverImg = res.data.coverImg;
-          this.categories = res.data.categories;
-        }
-      });
+  computed: {
+    ...mapState([
+      'coverImg',
+      'categories',
+    ]),
   },
   methods: {
     handleClick() {
@@ -139,17 +131,11 @@ export default {
       let file = this.$refs.uploadCover.$el.querySelector('input').files[0];
       fd.append('cover', file);
       fd.append('coverImg', hash);
-      this
-        .$http
-        .post('/config/upload-cover', fd)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            // done something
-            Message.success('上传用户头像成功');
-          } else {
-            Message.warning('服务器问题');
-          }
+      uploadCoverImgService(fd)
+        .then(() => {
+          Message.success('上传用户头像成功');
+        }).catch(() => {
+          Message.warning('服务器问题');
         });
     },
     resetForm(form) {
@@ -159,16 +145,11 @@ export default {
       /* eslint-disable consistent-return */
       this.$refs[form].validate((valid) => {
         if (valid) {
-          this
-            .$http
-            .post('/config/change-passwd', this.passwdForm)
-            .then((res) => {
-              res = res.body;
-              if (res.status === OK) {
-                Message.success('修改密码成功');
-              } else {
-                Message.error('服务器问题');
-              }
+          modifyPasswdService('/config/change-passwd', this.passwdForm)
+            .then(() => {
+              Message.success('修改密码成功');
+            }).catch(err => {
+              Message.error(`服务器问题${err}`);
             });
         } else {
           return false;
@@ -176,17 +157,12 @@ export default {
       });
     },
     deleteCategory(index) {
-      this
-        .$http
-        .delete(`/category/${this.categories[index].id}/delete`)
-        .then((res) => {
-          res = res.body;
-          if (res.status === OK) {
-            this.categories.splice(index, 1);
-            Message.success('删除分类成功');
-          } else {
-            Message.error('删除失败，该分类不存在');
-          }
+      deleteCategoryService(`/category/${this.categories[index].id}/delete`)
+        .then(() => {
+          this.categories.splice(index, 1);
+          Message.success('删除分类成功');
+        }).catch(() => {
+          Message.error('删除失败，该分类不存在');
         });
     },
   },
@@ -232,7 +208,7 @@ export default {
   .categories {
     padding-top: 10px;
     .el-tag {
-      margin-right: 10px;
+      margin: 10px 10px 0 0;
     }
   }
 }
