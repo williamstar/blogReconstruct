@@ -58,7 +58,6 @@ export default {
   },
   activated() {
     document.title = '后台管理';
-    console.log('activated');
     this.getBlogs();
   },
   computed: {
@@ -77,9 +76,6 @@ export default {
     },
     handleCurrentChange() {
       this.getBlogs();
-    },
-    handlerSearch() {
-
     },
     getBlogs(filter) {
       if (filter) {

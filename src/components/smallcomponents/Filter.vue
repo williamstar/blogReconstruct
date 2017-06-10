@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="queryStr" placeholder="全局搜索" icon="search" :on-icon-click="handleSearch"></el-input>
+        <el-input v-model="queryStr" placeholder="搜索内容包括标签/内容/标题" icon="search" :on-icon-click="handleSearch" @keyup.enter.native="handleSearch"></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     handleSearch() {
-
+      this.getBlog();
     },
     getBlog() {
       this.$emit('get-blog', {
