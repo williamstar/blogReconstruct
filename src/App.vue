@@ -3,20 +3,24 @@
     <my-header></my-header>
     <div class="main">
       <div class="content">
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
+        <div class="content-inner">
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
+        </div>
       </div>
       <div class="footer-wrapper">
         <my-footer></my-footer>
       </div>
     </div>
+    <to-top :model="'dual'"></to-top>
   </div>
 </template>
 
 <script>
 import myHeader from '@/components/header/Header';
 import myFooter from '@/components/footer/Footer';
+import ToTop from '@/components/smallcomponents/ToTop';
 import { mapActions } from 'vuex';
 
 export default {
@@ -24,6 +28,7 @@ export default {
   components: {
     myHeader,
     myFooter,
+    ToTop,
   },
   created() {
     this.preloadData();
@@ -54,6 +59,10 @@ export default {
       min-height: 100%;
       margin-bottom: -84px;
       background: #9cc3a4;
+      .content-inner {
+        width: 1400px;
+        margin: 0 auto;
+      }
       &:after {
         content: "";
         display: block;
