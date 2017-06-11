@@ -1,6 +1,6 @@
 # blog_reconstruct
 
-> A Vue.js project
+个人博客的前端页面，采用 Vue.js + VueRouter + Vuex + VueResource开发，使用基于markdown的博客编辑器——editormd,后端为python flask框架。
 
 ## Build Setup
 
@@ -18,4 +18,4 @@ npm run build
 npm run build --report
 ```
 
-使用vue.js分离重构博客项目。
+使用
