@@ -1,4 +1,4 @@
-import { preloadService, switchFastRenderService } from '../api/index';
+import { preloadService } from '../api/index';
 import { PRE_LOAD_DATA, ADD_CATEGORY, SWITCH_FAST_RENDER } from './mutationTypes';
 
 const OK = 'success';
@@ -15,11 +15,8 @@ export default {
   addCategory({ commit }, data) {
     commit(ADD_CATEGORY, data);
   },
-  switchFastRender({ commit, state }) {
-    switchFastRenderService({ renderWay: +!state.renderWay })
-      .then(() => {
-        commit(SWITCH_FAST_RENDER);
-      });
+  switchFastRender({ commit }) {
+    commit(SWITCH_FAST_RENDER);
   },
 };
 

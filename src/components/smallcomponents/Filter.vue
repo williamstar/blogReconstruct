@@ -1,29 +1,38 @@
 <template>
   <div class='filter-module'>
-    <el-form :inline="true" label-width="50px" class="filter">
-      <el-form-item v-if="isAdmin" label="博客状态">
-        <el-select v-model="isDraft" @change="getBlog">
-          <el-option v-for="(status, index) in blogStatuss" :value="index" :label="status" :key="index"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="分类">
+    <div class="filter-item" v-if="isAdmin">
+      <div class="filter-label">
+        博客状态
+      </div>
+      <el-select v-model="isDraft" @change="getBlog">
+        <el-option v-for="(status, index) in blogStatuss" :value="index" :label="status" :key="index"></el-option>
+      </el-select>
+    </div>
+    <div class="filter-item">
+      <div class="filter-label">分类</div>
+      <div class="filter-component">
         <el-select v-model="categoryIndex" @change="getBlog">
           <el-option v-for="category in filterCategories" :value="category.id" :label="category.val" :key="category.id"></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="排序">
+      </div>
+    </div>
+    <div class="filter-item">
+      <div class="filter-label">排序</div>
+      <div class="filter-component">
         <el-select v-model="sortedIndex" @change="getBlog">
           <el-option v-for="(status, index) in sortedStatuss" :value="index" :label="status.text" :key="status.val"></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="queryStr" placeholder="搜索内容标签/内容/标题" icon="search" :on-icon-click="handleSearch" @keyup.enter.native="handleSearch"></el-input>
-      </el-form-item>
-    </el-form>
+
+      </div>
+    </div>
+    <div class="filter-item">
+      <el-input v-model="queryStr" placeholder="搜索内容标签/内容/标题" icon="search" :on-icon-click="handleSearch" @keyup.enter.native="handleSearch"></el-input>
+    </div>
+    <div class="switch-render el-icon-menu" :class="{'active': renderWay }" @click="switchFastRender"> </div>
   </div>
 </template>
 <script type='text/javascript'>
-import { mapGetters } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   props: {
@@ -69,8 +78,10 @@ export default {
     ...mapGetters([
       'filterCategories',
     ]),
+    ...mapState(['renderWay']),
   },
   methods: {
+    ...mapActions(['switchFastRender']),
     handleSearch() {
       this.getBlog();
     },
@@ -88,9 +99,28 @@ export default {
 </script>
 <style lang='scss'>
 .filter-module {
-  margin-left: 70px;
-  label {
-    color: #fff;
+  display: flex;
+  margin: 0 80px;
+  .filter-item {
+    &:not(:first-child) {
+      margin-left: 40px;
+    }
+    display: flex;
+    align-items: center;
+    .filter-label {
+      color: #fff;
+    }
+  }
+  .switch-render {
+    margin-left: auto;
+    font-size: 24px;
+    cursor: pointer;
+    color: #124385;
+    transition: all .3s ease;
+    &.active {
+      color: #093367;
+      transform: rotate(45deg);
+    }
   }
 }
 </style>

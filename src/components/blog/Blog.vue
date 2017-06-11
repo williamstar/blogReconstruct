@@ -6,7 +6,7 @@
     <div class="detail">
       <span class="category">{{blog.category}}</span>
       <span class="tags-wrapper">
-        <el-tag v-for="(tag, index) in blog.tags" class="tag" :key="tag">{{tag}}</el-tag>
+        <el-tag v-for="(tag, index) in blog.tags" class="tag" :style="{'background': selectTagColor(index)}" :key="index">{{tag}}</el-tag>
       </span>
       <span class="datetime">{{blog.createDate | currentTime}}</span>
     </div>
@@ -27,10 +27,26 @@ import { getBlogService } from '@/api/index';
 export default {
   data() {
     return {
+      color: [
+        '#684e79',
+        '#ff708e',
+        '#47a899',
+        '#8abee5',
+      ],
       blog: {
       },
       editor: {},
+      preColor: 0,
+      colorOffset: 0,
     };
+  },
+  created() {
+    this.colorOffset = Math.floor(this.color.length * Math.random());
+  },
+  methods: {
+    selectTagColor(index) {
+      return this.color[(index + this.colorOffset) % this.color.length];
+    },
   },
   activated() {
     let loading = Loading.service({ target: document.querySelector('.blog-module') });
@@ -50,9 +66,7 @@ export default {
         console.log(err);
       })
       .then(() => {
-        setTimeout(() => {
-          loading.close();
-        }, 500);
+        loading.close();
       });
   },
   filters: {

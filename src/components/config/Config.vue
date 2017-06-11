@@ -72,7 +72,7 @@
 import { Message } from 'element-ui';
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
 import { mapState, mapActions } from 'vuex';
-import { uploadCoverImgService, deleteCategoryService, modifyPasswdService } from '@/api/index';
+import { uploadCoverImgService, deleteCategoryService, modifyPasswdService, switchFastRenderService } from '@/api/index';
 
 export default {
   data() {
@@ -118,6 +118,12 @@ export default {
   },
   methods: {
     ...mapActions(['switchFastRender']),
+    _switchFastRender() {
+      switchFastRenderService(+!this.renderWay)
+        .then(() => {
+          this.switchFastRender();
+        });
+    },
     handleClick() {
       if (this.activeName === 'personalData') {
         this.subActiveName = 'uploadProject';

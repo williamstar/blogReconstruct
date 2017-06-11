@@ -105,8 +105,8 @@ export default {
       }
     }
     &.fast-render {
-      margin-top: 20px;
-      padding: 10px;
+      margin-top: 30px;
+      padding: 15px 20px;
       width: 1200px;
       border-radius: 5px;
       background: #fff;
