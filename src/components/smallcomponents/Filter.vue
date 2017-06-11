@@ -100,7 +100,7 @@ export default {
 <style lang='scss'>
 .filter-module {
   display: flex;
-  margin: 0 80px;
+  margin: 20px 80px 20px 80px;
   .filter-item {
     &:not(:first-child) {
       margin-left: 40px;
@@ -108,6 +108,7 @@ export default {
     display: flex;
     align-items: center;
     .filter-label {
+      margin-right: 10px;
       color: #fff;
     }
   }

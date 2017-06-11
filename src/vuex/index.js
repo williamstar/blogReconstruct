@@ -7,7 +7,7 @@ import getters from './getter';
 Vue.use(Vuex);
 const state = {
   renderWay: 0,
-  coverImg: 'default-cover.jpg', // 用户封面图片
+  coverImg: '/static/images/default-cover.jpg', // 用户封面图片
   username: '', // 用户名字
   categories: [],
 };
