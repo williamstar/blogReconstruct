@@ -20,6 +20,7 @@
 import $ from 'jquery';
 import editormd from 'editormd';
 /* eslint-enable */
+import { Loading } from 'element-ui';
 import { currentTime } from '@/common/js/time';
 import { getBlogService } from '@/api/index';
 
@@ -32,6 +33,7 @@ export default {
     };
   },
   activated() {
+    let loading = Loading.service({ target: document.querySelector('.blog-module') });
     getBlogService(`/blog/${this.$route.params.blogId}`)
       .then((blog) => {
         this.blog = blog;
@@ -43,8 +45,14 @@ export default {
           htmlDecode: true,
           markdownSourceCode: false,
         });
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
+      })
+      .then(() => {
+        setTimeout(() => {
+          loading.close();
+        }, 500);
       });
   },
   filters: {
@@ -63,8 +71,9 @@ export default {
   margin: 0px auto;
   padding: 20px 0;
   .title {
-    text-align: center;
     margin-bottom: 20px;
+    text-align: center;
+    font-size: 32px;
     color: #fff;
   }
   .detail {

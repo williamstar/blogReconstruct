@@ -58,7 +58,7 @@ export default {
     .content {
       min-height: 100%;
       margin-bottom: -84px;
-      background: #9cc3a4;
+      background: #74cdcc;
       .content-inner {
         width: 1400px;
         margin: 0 auto;

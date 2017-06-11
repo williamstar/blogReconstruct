@@ -56,8 +56,10 @@ export default {
       this.$router.push('/login');
     });
   },
-  activated() {
-    document.title = '后台管理';
+  mounted() {
+    if (this.isAdmin) {
+      document.title = '后台管理';
+    }
     this.getBlogs();
   },
   computed: {
@@ -111,7 +113,7 @@ export default {
     color: #fff;
   }
   .platform {
-    padding: 10px 0 10px 20px;
+    padding: 10px 0 20px 80px;
     .el-button {
       margin-right: 20px;
     }
@@ -123,7 +125,7 @@ export default {
   .content-hook {
     min-height: 600px;
     .pagination {
-      margin-top: 25px;
+      margin-top: 100px;
       display: flex;
       justify-content: center;
     }

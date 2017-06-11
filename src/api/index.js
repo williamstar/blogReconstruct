@@ -134,6 +134,14 @@ const uploadBlogCover = (hash, fd) => {
   });
 };
 
+const switchFastRenderService = (state) => {
+  return put('/config/switch-fast-render', state).then(({ status, msg }) => {
+    if (status !== OK) {
+      throw new Error(msg);
+    }
+  });
+};
+
 export {
   preloadService,
   checkUserService,
@@ -151,4 +159,5 @@ export {
   editBlogService,
   tagSuggestService,
   uploadBlogCover,
+  switchFastRenderService,
 };

@@ -1,76 +1,74 @@
 <template>
   <div class='editor-module'>
     <el-row>
-      <el-col :span="16" :offset="4">
-        <el-form label-width="40px">
-          <el-row>
-            <el-col :span="20">
-              <!--标题和时间-->
-              <el-row type="flex" justify="space-between">
-                <el-col :span="12">
-                  <el-form-item label="标题">
-                    <el-input v-model="form.title"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="9" :offset="3">
-                  <el-form-item label="分类">
-                    <el-select v-model="form.categoryId" filterable allow-create clearable @change="addNewCategory">
-                      <el-option v-for="category in categories" :value="category.id" :key="category.id" :label="category.val"> </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <!--标签和自动保存-->
-              <el-row>
-                <el-col :span="9">
-                  <el-form-item label="标签">
-                    <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
-                      {{tag}}
-                    </el-tag>
-                    <!--必须要再绑定一个v-model才可以实现input的变动改变-->
-                    <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="tagCancel" @keyup.enter.native="tagConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
-                    </el-autocomplete>
-                    <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item label="自动保存" label-width="80px">
-                    <el-switch v-model="autoSave" @change="handleAutoSave"></el-switch>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-col>
-            <!--封面-->
-            <el-col :span="4" class="clearfix">
-              <div class="cover-wrapper">
-                <el-button v-if="!haveCover && !form.coverImg" class="btn-cover" @click="selectCover">
-                  <i class="el-icon-plus icon-plus"></i>
-                </el-button>
-                <img v-else :src="`/image/${form.coverImg}`" class="upload-cover" alt="封面" @click="selectCover">
-                <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
-              </div>
-            </el-col>
-          </el-row>
-          <!--博客框-->
-          <div class="editor-wrapper">
-            <input type="hidden" id="text" :value="form.text">
-            <div id="my-editor">
+      <el-form label-width="40px">
+        <el-row>
+          <el-col :span="20">
+            <!--标题和时间-->
+            <el-row type="flex" justify="space-between">
+              <el-col :span="12">
+                <el-form-item label="标题">
+                  <el-input v-model="form.title"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="9" :offset="3">
+                <el-form-item label="分类">
+                  <el-select v-model="form.categoryId" filterable allow-create clearable @change="addNewCategory">
+                    <el-option v-for="category in categories" :value="category.id" :key="category.id" :label="category.val"> </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <!--标签和自动保存-->
+            <el-row>
+              <el-col :span="9">
+                <el-form-item label="标签">
+                  <el-tag v-for="tag in form.tags" :key="tag" :closable="true" @close="removeTag(tag)" class="tag" type="primary" color="#fff">
+                    {{tag}}
+                  </el-tag>
+                  <!--必须要再绑定一个v-model才可以实现input的变动改变-->
+                  <el-autocomplete class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small" @keyup.esc.native="tagCancel" @keyup.enter.native="tagConfirm" @select="selectTag" :fetch-suggestions="tagSuggestion">
+                  </el-autocomplete>
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item label="自动保存" label-width="80px">
+                  <el-switch v-model="autoSave" @change="handleAutoSave"></el-switch>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-col>
+          <!--封面-->
+          <el-col :span="4" class="clearfix">
+            <div class="cover-wrapper">
+              <el-button v-if="!haveCover && !form.coverImg" class="btn-cover" @click="selectCover">
+                <i class="el-icon-plus icon-plus"></i>
+              </el-button>
+              <img v-else :src="`/image/${form.coverImg}`" class="upload-cover" alt="封面" @click="selectCover">
+              <transparent-file-elm :selector="'upload-cover'" :need-hash="true" @had:cover="setCover" ref="uploadCover"></transparent-file-elm>
             </div>
+          </el-col>
+        </el-row>
+        <!--博客框-->
+        <div class="editor-wrapper">
+          <input type="hidden" id="text" :value="form.text">
+          <div id="my-editor">
           </div>
-          <div class="submit-button-wrapper">
-            <el-button type="primary" size="large" @click="submit">
-              提交
-            </el-button>
-            <el-button v-if="!this.form.id" type="primary" size="large" @click="saveAsDraft">
-              保存为草稿
-            </el-button>
-            <el-button v-if="this.form.id && this.form.isDraft" type="primary" size="large" @click="publish">
-              发布
-            </el-button>
-            <el-button type="danger" @click="resetForm">重置表单</el-button>
-          </div>
-        </el-form>
-      </el-col>
+        </div>
+        <div class="submit-button-wrapper">
+          <el-button type="primary" size="large" @click="submit">
+            提交
+          </el-button>
+          <el-button v-if="!this.form.id" type="primary" size="large" @click="saveAsDraft">
+            保存为草稿
+          </el-button>
+          <el-button v-if="this.form.id && this.form.isDraft" type="primary" size="large" @click="publish">
+            发布
+          </el-button>
+          <el-button type="danger" @click="resetForm">重置表单</el-button>
+        </div>
+      </el-form>
     </el-row>
   </div>
 </template>
@@ -217,7 +215,6 @@ export default {
       if (nval === '' || typeof nval === 'object' || typeof nval === 'number') {
         return;
       }
-      debugger;
       if (!this.categories.some(category => category.val === nval)) {
         // 创建新的category
         addCategoryService({ category: nval })

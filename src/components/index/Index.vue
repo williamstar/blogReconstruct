@@ -2,12 +2,14 @@
   <div class='index-module'>
     <div class="nav-wrapper">
       <nav class="navigation">
-        <router-link to="/" active-class="active" exact>首页</router-link>
+        <router-link to="/" active-class="active"  exact>首页</router-link>
         <router-link to="/personal" active-class="active">个人介绍</router-link>
         <router-link to="/project" active-class="active">项目</router-link>
       </nav>
     </div>
-    <router-view :blogs="blogs"></router-view>
+    <keep-alive>
+      <router-view :blogs="blogs"></router-view>
+    </keep-alive>
   </div>
 </template>
 <script type='text/javascript'>
@@ -21,6 +23,7 @@ export default {
   },
   activated() {
     document.title = 'william';
+    // this.$children[this.$children.length - 1].getBlogs();
   },
   components: {
     blogIterator,
@@ -37,11 +40,11 @@ export default {
       display: flex;
       justify-content: space-around;
       .active {
-        color: #770b42;
+        color: #0c5c95;
       }
       a {
-        font-size: 18px;
-        font-weight: 500;
+        font-size: 24px;
+        font-weight: 300;
         color: #fff;
       }
     }

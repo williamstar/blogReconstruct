@@ -1,7 +1,7 @@
 <template>
   <!--
-        自定义的滚动插件，使用requestAnimationFrame获取流畅性能，根据滚动的高度采取不同的移动速度。
-      -->
+          自定义的滚动插件，使用requestAnimationFrame获取流畅性能，根据滚动的高度采取不同的移动速度。
+        -->
   <div class='toTop-module'>
     <div class="arrow" :class="iconClass" @click="scrollTop"></div>
     <div v-if="dual" class="arrow el-icon-caret-bottom" @click="scrollTop"></div>
@@ -72,11 +72,15 @@ export default {
   display: flex;
   flex-direction: column;
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: 50px;
+  bottom: 50px;
   .arrow {
     color: #fff;
     cursor: pointer;
+    font-size: 25px;
+    &:active {
+      color: #dbdee1;
+    }
   }
 }
 

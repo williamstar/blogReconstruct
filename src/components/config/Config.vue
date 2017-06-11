@@ -48,18 +48,22 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="博客设置" name="blogConfig">
-        <el-col :span="2">
-          <div class="nav-vertical-item">
+        <div class="config-item">
+          <div class="config-label">
             分类管理
           </div>
-        </el-col>
-        <el-col :span="21" :offset="1">
           <div class="categories">
             <el-tag v-for="(category, index) in categories" color="#f0f" :closable="true" :key="category.id" @close="deleteCategory(index)">
               {{category.val}}
             </el-tag>
           </div>
-        </el-col>
+        </div>
+        <div class="config-item">
+          <div class="config-label">快速渲染</div>
+          <div class="display-way">
+            <el-switch v-model="renderWay" @change="switchFastRender"></el-switch>
+          </div>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -67,7 +71,7 @@
 <script type='text/javascript'>
 import { Message } from 'element-ui';
 import transparentFileElm from '@/components/smallcomponents/TransparentFileElm';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { uploadCoverImgService, deleteCategoryService, modifyPasswdService } from '@/api/index';
 
 export default {
@@ -109,9 +113,11 @@ export default {
     ...mapState([
       'coverImg',
       'categories',
+      'renderWay',
     ]),
   },
   methods: {
+    ...mapActions(['switchFastRender']),
     handleClick() {
       if (this.activeName === 'personalData') {
         this.subActiveName = 'uploadProject';
@@ -195,9 +201,7 @@ export default {
       height: 100%;
     }
   }
-  .el-tabs__item {
-    color: #fff;
-  }
+
   .modify-passwd {
     width: 500px;
     margin: 20px auto;
@@ -205,11 +209,13 @@ export default {
       color: #fff;
     }
   }
-  .categories {
-    padding-top: 10px;
-    .el-tag {
-      margin: 10px 10px 0 0;
-    }
+
+  .el-tabs__item {
+    color: #fff;
+  }
+
+  .el-tag {
+    margin-right: 10px;
   }
 }
 </style>
